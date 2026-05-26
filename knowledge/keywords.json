@@ -1,0 +1,270 @@
+{
+  "categories": {
+    "medal": {
+      "seed_keyword": "custom medals",
+      "main_keywords": [
+        {"keyword": "custom medals", "volume": 880, "kd": 42},
+        {"keyword": "custom marathon medals", "volume": 320, "kd": 28},
+        {"keyword": "custom race medals", "volume": 260, "kd": 24},
+        {"keyword": "custom sports medals", "volume": 210, "kd": 35},
+        {"keyword": "custom finisher medals", "volume": 140, "kd": 18},
+        {"keyword": "custom running medals", "volume": 170, "kd": 30},
+        {"keyword": "bulk custom medals", "volume": 120, "kd": 55},
+        {"keyword": "wholesale custom medals", "volume": 200, "kd": 60},
+        {"keyword": "custom medals manufacturer", "volume": 150, "kd": 48},
+        {"keyword": "custom medals China supplier", "volume": 90, "kd": 38}
+      ],
+      "informational_keywords": [
+        "how to design custom medals",
+        "what are marathon medals made of",
+        "custom medals design guide"
+      ],
+      "commercial_keywords": [
+        "best custom medal manufacturers",
+        "custom medals vs stock medals",
+        "top custom medal suppliers"
+      ],
+      "transactional_keywords": [
+        "custom medals wholesale price",
+        "bulk custom medals factory",
+        "order custom medals online"
+      ],
+      "geo_keywords": [
+        "custom medals China OEM",
+        "custom medals manufacturer China",
+        "China custom medal factory"
+      ],
+      "attribute_keywords": [
+        "zinc alloy custom medals",
+        "gold finish custom medals",
+        "enamel custom medals"
+      ],
+      "question_keywords": [
+        "how much do custom medals cost",
+        "what is the best material for medals",
+        "how long do custom medals take to make"
+      ]
+    },
+    "badge": {
+      "seed_keyword": "custom badges",
+      "main_keywords": [
+        {"keyword": "custom badges", "volume": 740, "kd": 38},
+        {"keyword": "custom lapel pins", "volume": 540, "kd": 45},
+        {"keyword": "custom enamel badges", "volume": 290, "kd": 32},
+        {"keyword": "custom metal badges", "volume": 230, "kd": 28},
+        {"keyword": "custom corporate badges", "volume": 160, "kd": 40},
+        {"keyword": "custom name badges", "volume": 310, "kd": 52},
+        {"keyword": "wholesale custom badges", "volume": 180, "kd": 55},
+        {"keyword": "custom badges manufacturer", "volume": 130, "kd": 42},
+        {"keyword": "custom badge factory China", "volume": 85, "kd": 35}
+      ],
+      "informational_keywords": [
+        "how to design custom badges",
+        "types of enamel badges",
+        "custom badge design ideas"
+      ],
+      "commercial_keywords": [
+        "best custom badge manufacturers",
+        "custom badges vs standard badges",
+        "top badge suppliers for events"
+      ],
+      "transactional_keywords": [
+        "custom badges bulk order",
+        "wholesale custom badges price",
+        "custom badge factory OEM"
+      ],
+      "geo_keywords": [
+        "custom badges China supplier",
+        "OEM badge manufacturer China",
+        "China custom enamel badge factory"
+      ],
+      "attribute_keywords": [
+        "zinc alloy custom badges",
+        "soft enamel badges",
+        "hard enamel lapel pins"
+      ],
+      "question_keywords": [
+        "how much do custom badges cost",
+        "what is the difference between soft and hard enamel",
+        "how are custom badges made"
+      ]
+    },
+    "coin": {
+      "seed_keyword": "custom coins",
+      "main_keywords": [
+        {"keyword": "custom coins", "volume": 620, "kd": 40},
+        {"keyword": "custom challenge coins", "volume": 480, "kd": 35},
+        {"keyword": "custom commemorative coins", "volume": 190, "kd": 25},
+        {"keyword": "custom metal coins", "volume": 170, "kd": 30},
+        {"keyword": "custom military coins", "volume": 130, "kd": 22},
+        {"keyword": "wholesale custom coins", "volume": 140, "kd": 50},
+        {"keyword": "custom coin manufacturer", "volume": 110, "kd": 45},
+        {"keyword": "custom coins China factory", "volume": 75, "kd": 32}
+      ],
+      "informational_keywords": [
+        "how to design custom challenge coins",
+        "what are challenge coins made of",
+        "challenge coin design guide"
+      ],
+      "commercial_keywords": [
+        "best custom coin manufacturers",
+        "custom coins vs standard coins",
+        "top challenge coin suppliers"
+      ],
+      "transactional_keywords": [
+        "custom coins bulk order",
+        "wholesale challenge coins price",
+        "custom coin factory OEM"
+      ],
+      "geo_keywords": [
+        "custom coins China manufacturer",
+        "OEM challenge coin supplier China",
+        "China custom coin factory"
+      ],
+      "attribute_keywords": [
+        "zinc alloy custom coins",
+        "antique finish challenge coins",
+        "enamel custom coins"
+      ],
+      "question_keywords": [
+        "how much do custom challenge coins cost",
+        "what is the standard size of a challenge coin",
+        "how long do custom coins take to produce"
+      ]
+    },
+    "keychain": {
+      "seed_keyword": "custom keychains",
+      "main_keywords": [
+        {"keyword": "custom keychains", "volume": 920, "kd": 45},
+        {"keyword": "custom metal keychains", "volume": 350, "kd": 32},
+        {"keyword": "custom promotional keychains", "volume": 280, "kd": 38},
+        {"keyword": "custom logo keychains", "volume": 410, "kd": 50},
+        {"keyword": "wholesale custom keychains", "volume": 330, "kd": 58},
+        {"keyword": "custom keychain manufacturer", "volume": 160, "kd": 42},
+        {"keyword": "custom keychains China factory", "volume": 110, "kd": 35}
+      ],
+      "informational_keywords": [
+        "how to design custom keychains",
+        "what are custom keychains made of",
+        "custom keychain material guide"
+      ],
+      "commercial_keywords": [
+        "best custom keychain manufacturers",
+        "custom keychains vs stock keychains",
+        "top promotional keychain suppliers"
+      ],
+      "transactional_keywords": [
+        "custom keychains bulk order",
+        "wholesale custom keychains price",
+        "custom keychain factory OEM"
+      ],
+      "geo_keywords": [
+        "custom keychains China supplier",
+        "OEM keychain manufacturer China",
+        "China custom metal keychain factory"
+      ],
+      "attribute_keywords": [
+        "zinc alloy custom keychains",
+        "3D custom metal keychains",
+        "enamel custom logo keychains"
+      ],
+      "question_keywords": [
+        "how much do custom keychains cost",
+        "what is the best material for keychains",
+        "how long do custom keychains take to make"
+      ]
+    },
+    "pin": {
+      "seed_keyword": "custom pins",
+      "main_keywords": [
+        {"keyword": "custom pins", "volume": 680, "kd": 40},
+        {"keyword": "custom enamel pins", "volume": 490, "kd": 35},
+        {"keyword": "custom lapel pins", "volume": 520, "kd": 42},
+        {"keyword": "custom metal pins", "volume": 240, "kd": 28},
+        {"keyword": "wholesale custom pins", "volume": 210, "kd": 52},
+        {"keyword": "custom pin manufacturer", "volume": 140, "kd": 45},
+        {"keyword": "custom pins China factory", "volume": 95, "kd": 33}
+      ],
+      "informational_keywords": [
+        "how to design custom enamel pins",
+        "what are lapel pins made of",
+        "custom pin design ideas"
+      ],
+      "commercial_keywords": [
+        "best custom pin manufacturers",
+        "custom enamel pins vs printed pins",
+        "top pin suppliers for events"
+      ],
+      "transactional_keywords": [
+        "custom pins bulk order",
+        "wholesale enamel pins price",
+        "custom pin factory OEM"
+      ],
+      "geo_keywords": [
+        "custom pins China supplier",
+        "OEM enamel pin manufacturer China",
+        "China custom metal pin factory"
+      ],
+      "attribute_keywords": [
+        "zinc alloy custom pins",
+        "soft enamel lapel pins",
+        "3D custom metal pins"
+      ],
+      "question_keywords": [
+        "how much do custom enamel pins cost",
+        "what is the difference between soft and hard enamel pins",
+        "how are custom lapel pins made"
+      ]
+    }
+  },
+  "materials": {
+    "zinc alloy": {
+      "density": "6.6 g/cm³",
+      "casting_tolerance": "±0.1 mm",
+      "plating_thickness": {"gold": "0.5-1.0 microns", "nickel": "5-15 microns"},
+      "advantages": ["lightweight", "fine detail reproduction", "corrosion resistant"]
+    },
+    "iron": {
+      "density": "7.8 g/cm³",
+      "casting_tolerance": "±0.2 mm",
+      "plating_thickness": {"gold": "0.3-0.8 microns", "nickel": "3-10 microns"},
+      "advantages": ["cost-effective", "durable", "heavier feel"]
+    },
+    "brass": {
+      "density": "8.4 g/cm³",
+      "casting_tolerance": "±0.15 mm",
+      "plating_thickness": {"gold": "0.5-1.0 microns", "nickel": "5-12 microns"},
+      "advantages": ["premium look", "corrosion resistant", "traditional material"]
+    },
+    "acrylic": {
+      "density": "1.2 g/cm³",
+      "manufacturing_tolerance": "±0.3 mm",
+      "advantages": ["lightweight", "transparent options", "color variety", "budget-friendly"]
+    }
+  },
+  "processes": {
+    "die casting": {
+      "description": "Molten metal injected into a steel mold under high pressure",
+      "materials": ["zinc alloy", "aluminum"],
+      "typical_tolerance": "±0.1 mm (zinc), ±0.2 mm (aluminum)",
+      "best_for": "high-volume production with fine details"
+    },
+    "stamping": {
+      "description": "Metal sheet pressed between dies to form shape",
+      "materials": ["iron", "brass", "copper"],
+      "typical_tolerance": "±0.15 mm",
+      "best_for": "flat or shallow-relief designs"
+    },
+    "electroplating": {
+      "description": "Electric current deposits a thin metal layer onto the surface",
+      "typical_thickness": {"gold": "0.5-1.0 μm", "nickel": "5-15 μm", "silver": "1-3 μm"},
+      "best_for": "decorative and protective surface finishing"
+    },
+    "enamel filling": {
+      "description": "Colored enamel paste applied into recessed areas and baked",
+      "types": ["soft enamel (slightly recessed)", "hard enamel (flat, polished)"],
+      "curing_temperature": "160-180°C",
+      "best_for": "color decoration on metal badges, pins, and medals"
+    }
+  }
+}

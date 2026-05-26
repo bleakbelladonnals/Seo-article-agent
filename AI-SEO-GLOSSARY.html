@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SEO 术语详解 + 图片SEO模块剖析 | SEO Crew Agent</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --border: #334155;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --purple: #c084fc;
+    --orange: #fb923c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    line-height: 1.8;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  h1 {
+    font-size: 2.2em;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 1.5em;
+    color: var(--accent);
+    margin: 48px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  h3 {
+    font-size: 1.15em;
+    color: var(--green);
+    margin: 28px 0 10px;
+  }
+  h4 {
+    color: var(--purple);
+    margin: 16px 0 6px;
+    font-size: 1em;
+  }
+  p, li { color: var(--text); margin-bottom: 8px; }
+  a { color: var(--accent); }
+  strong { color: #fff; }
+  code {
+    background: #334155;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: var(--orange);
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .card.warn {
+    border-left: 4px solid var(--yellow);
+  }
+  .card.good {
+    border-left: 4px solid var(--green);
+  }
+  .card.bad {
+    border-left: 4px solid var(--red);
+  }
+
+  /* Term box */
+  .term {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 14px 0;
+    border-left: 4px solid var(--accent);
+  }
+  .term .name {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .term .en {
+    font-size: 0.85em;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .term .tags {
+    margin-bottom: 10px;
+  }
+  .term .tags span {
+    display: inline-block;
+    font-size: 0.78em;
+    padding: 2px 10px;
+    border-radius: 20px;
+    margin-right: 6px;
+    background: #1e3a5f;
+    color: var(--accent);
+    border: 1px solid #1e3a5f;
+  }
+
+  /* Flow chart */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin: 20px 0;
+    font-size: 0.9em;
+  }
+  .flow .node {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .flow .arrow {
+    color: var(--accent);
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  .flow .node.green  { border-color: var(--green); }
+  .flow .node.purple { border-color: var(--purple); }
+  .flow .node.orange { border-color: var(--orange); }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+  }
+  th {
+    background: #1e3a5f;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  td { font-size: 0.92em; }
+
+  /* Summary box */
+  .summary {
+    background: linear-gradient(135deg, #1e3a5f, #1a2744);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin: 20px 0;
+  }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.75em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .badge.p0 { background: #7f1d1d; color: #fca5a5; }
+  .badge.p1 { background: #78350f; color: #fcd34d; }
+  .badge.p2 { background: #1e3a5f; color: #93c5fd; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    body { padding: 16px; }
+    h1 { font-size: 1.5em; }
+    .flow { flex-direction: column; }
+    .flow .arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<h1>AI SEO 术语完全解释<br>+ 图片 SEO 模块深度剖析</h1>
+<p style="color:var(--muted);font-size:0.95em;">
+  配套文档：<a href="AI-SEO-EVALUATION.md">AI-SEO-EVALUATION.md</a>（项目评估报告）<br>
+  适用场景：面试准备 / 向非技术人员解释项目 / 理解"AI 时代的 SEO 和传统 SEO 有什么不同"
+</p>
+
+<!-- ============================================================ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ============================================================ -->
+<div class="toc">
+  <strong style="color:var(--accent);">导航</strong>
+  <ol>
+    <li><a href="#part1">第一部分：核心概念 — 什么是 AI SEO？</a></li>
+    <li><a href="#part2">第二部分：术语词典 — 逐条解释评估报告中的所有术语</a></li>
+    <li><a href="#part3">第三部分：图片 SEO 模块 — 完整工作流程拆解</a></li>
+    <li><a href="#part4">第四部分：这些术语在项目中对应什么代码？</a></li>
+    <li><a href="#part5">第五部分：面试模拟 — 常见追问 &amp; 回答思路</a></li>
+  </ol>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 1: CORE CONCEPTS -->
+<!-- ============================================================ -->
+<h2 id="part1">第一部分：核心概念 — 什么是 AI SEO？</h2>
+
+<div class="card good">
+  <h3>一句话版本</h3>
+  <p><strong>AI SEO（又称 GEO / AEO）</strong> = 让你的内容被 AI 搜索引擎（ChatGPT、Perplexity、Google AI Overviews）<strong>引用和推荐</strong>，而不仅仅是在 Google 传统搜索结果中排名靠前。</p>
+</div>
+
+<h3>传统 SEO vs AI SEO</h3>
+<table>
+  <tr>
+    <th>维度</th>
+    <th>传统 SEO</th>
+    <th>AI SEO (GEO)</th>
+  </tr>
+  <tr>
+    <td>目标</td>
+    <td>在 Google 搜索结果页排前 3</td>
+    <td>被 ChatGPT / Perplexity / Google AI Overviews 引用为答案来源</td>
+  </tr>
+  <tr>
+    <td>核心指标</td>
+    <td>排名、点击率、流量</td>
+    <td>引用率、品牌可见度、AI 推荐频率</td>
+  </tr>
+  <tr>
+    <td>优化对象</td>
+    <td>关键词密度、外链、meta 标签</td>
+    <td>内容结构、来源引用、专家署名、Schema markup、统计数据</td>
+  </tr>
+  <tr>
+    <td>验证方式</td>
+    <td>Google Search Console、Ahrefs</td>
+    <td>手动查 ChatGPT/Perplexity 是否引用你，或专用工具（Otterly、ZipTie）</td>
+  </tr>
+  <tr>
+    <td>典型手段</td>
+    <td>关键词堆砌、外链建设</td>
+    <td>结构化数据、权威引用、内容块模式、llms.txt</td>
+  </tr>
+</table>
+
+<div class="card">
+  <h4>为什么 AI SEO 现在重要？</h4>
+  <p>2024-2025 年，越来越多的用户不再在 Google 搜索框里打字，而是直接在 ChatGPT 或 Perplexity 里提问。AI 给出答案时会<strong>引用来源</strong>——如果你的内容被 AI 引用，你就获得了"零点击流量"之外的<strong>品牌曝光</strong>。研究显示，AI 引用第三方来源（如 Wikipedia）的概率是引用品牌官网的 <strong>6.5 倍</strong>。AI SEO 的目的就是缩小这个差距。</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 2: GLOSSARY -->
+<!-- ============================================================ -->
+<h2 id="part2">第二部分：术语词典</h2>
+<p style="color:var(--muted);">按评估报告中出现的顺序，逐条用大白话解释。每条包含：<strong>中文名 / 英文全称 / 大白话解释 / 在你的项目里对应什么</strong>。</p>
+
+<!-- ── AI SEO / GEO / AEO ── -->
+<div class="term">
+  <div class="name">AI SEO ≈ GEO ≈ AEO</div>
+  <div class="en">AI Search Engine Optimization / Generative Engine Optimization / Answer Engine Optimization</div>
+  <div class="tags"><span>核心概念</span><span>Pillar 1-3 的总称</span></div>
+  <p><strong>大白话：</strong>三个词基本指向同一件事——让你的内容在 AI 搜索引擎（不是传统 Google）里被推荐。不同公司叫法不同：</p>
+  <ul>
+    <li><strong>GEO</strong>（Generative Engine Optimization）= 生成式引擎优化，学术界用的术语（Princeton 论文）</li>
+    <li><strong>AEO</strong>（Answer Engine Optimization）= 答案引擎优化，强调"AI 直接回答问题"场景</li>
+    <li><strong>AI SEO</strong> = 最通俗的叫法，我们这个项目用的就是这个</li>
+  </ul>
+  <p><strong>面试时说：</strong>"AI SEO 的目标不是传统搜索排名，而是让 AI 把你的内容当作可信来源来引用。"</p>
+</div>
+
+<!-- ── Pillar 1: Structure ── -->
+<div class="term">
+  <div class="name">Pillar 1 — Structure（内容可提取性）</div>
+  <div class="en">Content Extractability</div>
+  <div class="tags"><span>ai-seo 框架</span><span>三大支柱之一</span></div>
+  <p><strong>大白话：</strong>你的内容<strong>格式好不好</strong>，AI 能不能轻松"读懂"并提取关键信息。</p>
+  <p>AI 不像人会逐字阅读——它需要清晰的结构信号：表格优于大段文字、编号列表优于散文、每个段落开头直接给出答案。如果你的内容像一篇没有标题、不分段的长篇小说，AI 很难从中提取出"这个问题的答案是什么"。</p>
+  <p><strong>类比：</strong>传统 SEO 像是给书店里的书排序；Structure 是确保你的书有清晰的目录、章节标题和索引——这样不管是人还是 AI，都能快速找到需要的信息。</p>
+</div>
+
+<!-- ── Pillar 2: Authority ── -->
+<div class="term">
+  <div class="name">Pillar 2 — Authority（内容可引用性）</div>
+  <div class="en">Content Citability</div>
+  <div class="tags"><span>ai-seo 框架</span><span>三大支柱之一</span></div>
+  <p><strong>大白话：</strong>AI 判断"这段话<strong>可信不可信</strong>"的依据是什么？</p>
+  <p>如果一句话没有来源、没有专家署名、没有数据支撑，AI 不会引用它——因为 AI 倾向于引用"看起来有权威感"的内容。提升权威感的方法包括：每条数据标注来源、文章有署名作者+资质说明、使用专业术语、引用行业标准（如 ASTM）。</p>
+  <p><strong>类比：</strong>一篇知乎回答如果带有"XX 领域博士"认证标签且引用了论文来源，比你匿名发的一段话更容易被 AI 引用。</p>
+</div>
+
+<!-- ── Pillar 3: Presence ── -->
+<div class="term">
+  <div class="name">Pillar 3 — Presence（AI 可见度）</div>
+  <div class="en">AI Visibility / Presence</div>
+  <div class="tags"><span>ai-seo 框架</span><span>三大支柱之一</span></div>
+  <p><strong>大白话：</strong>你的品牌/内容<strong>是否出现在 AI 会去查找的地方</strong>。</p>
+  <p>AI 训练数据中包含 Wikipedia、Reddit、行业媒体、Quora 等——如果你的品牌在这些地方没有任何存在，AI 就无法"认识"你。此外，你的网站需要通过 <code>robots.txt</code> 配置允许 AI 爬虫访问；如果不配置，AI 根本看不到你的网站。</p>
+  <p><strong>类比：</strong>开了一家店但没在任何地图 App 上标注位置——GPS 导航找不到你。Presence 就是确保 AI 的地图上有你的位置。</p>
+</div>
+
+<!-- ── GEO (Princeton) ── -->
+<div class="term">
+  <div class="name">Princeton GEO 研究（9 大优化方法）</div>
+  <div class="en">KDD 2024: "GEO: Generative Engine Optimization"</div>
+  <div class="tags"><span>学术研究</span><span>权威数据</span></div>
+  <p><strong>大白话：</strong>2024 年 Princeton 大学在顶级学术会议 KDD 上发表的论文，通过大规模实验量化了<strong>9 种优化方法对 AI 引用率的提升效果</strong>。这是目前 AI SEO 领域最有说服力的数据来源。</p>
+  <table>
+    <tr><th>方法</th><th>效果</th><th>大白话</th></tr>
+    <tr>
+      <td>Cite Sources（标注来源）</td>
+      <td style="color:var(--green)">+40%</td>
+      <td>每条数据后面写"根据 XX 标准/XX 研究"——这是最有效的方法</td>
+    </tr>
+    <tr>
+      <td>Add Statistics（加统计数据）</td>
+      <td style="color:var(--green)">+37%</td>
+      <td>用具体数字而不是模糊形容词（"6.6 g/cm³"而不是"很轻"）</td>
+    </tr>
+    <tr>
+      <td>Add Quotations（加专家引用）</td>
+      <td style="color:var(--green)">+30%</td>
+      <td>引用有名字、有头衔的专家说的话</td>
+    </tr>
+    <tr>
+      <td>Authoritative Tone（权威语气）</td>
+      <td>+25%</td>
+      <td>用 B2B 专业语言，不要写得太随意</td>
+    </tr>
+    <tr>
+      <td>Improve Clarity（提升清晰度）</td>
+      <td>+20%</td>
+      <td>一段一个想法，主动语态</td>
+    </tr>
+    <tr>
+      <td>Technical Terms（专业术语）</td>
+      <td>+18%</td>
+      <td>正确使用行业术语（如 die-casting、electroplating）</td>
+    </tr>
+    <tr>
+      <td>Unique Vocabulary（独特词汇）</td>
+      <td>+15%</td>
+      <td>避免重复用同样的词，词汇多样化</td>
+    </tr>
+    <tr>
+      <td>Fluency Optimization（流畅度）</td>
+      <td>+15~30%</td>
+      <td>减少语法错误，提升可读性</td>
+    </tr>
+    <tr>
+      <td style="color:var(--red)">Keyword Stuffing（关键词堆砌）</td>
+      <td style="color:var(--red)">-10%</td>
+      <td>硬塞关键词反而有害</td>
+    </tr>
+  </table>
+  <p><strong>面试时说：</strong>"基于 Princeton 2024 年的 GEO 研究，标注来源和添加统计数据是提升 AI 引用率最有效的两个手段，分别能提升 40% 和 37%。我们的系统在 Writer prompt 中强制要求每条数据标注来源，Reviewer 也会检查这一点。"</p>
+</div>
+
+<!-- ── Schema Markup ── -->
+<div class="term">
+  <div class="name">Schema Markup / 结构化数据</div>
+  <div class="en">Schema.org Structured Data (JSON-LD format)</div>
+  <div class="tags"><span>技术概念</span><span>P0 缺失→已修复</span></div>
+  <p><strong>大白话：</strong>在网页 HTML 中嵌入一段<strong>机器可读的标签</strong>，告诉搜索引擎"这段文字是文章标题""这段是 FAQ 问答""这张是产品图片"。就像给内容的每个部分贴了标签，搜索引擎（和 AI）一看就懂。</p>
+  <p><strong>类比：</strong>一个没有 Schema 的网页像是一张纯照片——搜索引擎只能"看到"有文字，但不知道哪部分是标题、哪部分是作者。Schema 就是在照片上标注："这是标题""这是作者名字""这是常见问题"。</p>
+  <p>常见格式是 <strong>JSON-LD</strong>（JSON for Linked Data），就是一段放在 <code>&lt;script type="application/ld+json"&gt;</code> 标签里的 JSON：</p>
+  <pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;overflow-x:auto;font-size:0.82em;">{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Custom Marathon Medals Guide",
+  "author": { "@type": "Person", "name": "Industry Expert" },
+  "datePublished": "2026-05-27"
+}</pre>
+</div>
+
+<!-- ── Article Schema ── -->
+<div class="term">
+  <div class="name">Article Schema</div>
+  <div class="en">schema.org/Article</div>
+  <div class="tags"><span>Schema 类型</span></div>
+  <p><strong>大白话：</strong>告诉搜索引擎"这是一篇文章（不是产品页、不是视频），它的标题、作者、发布日期是什么"。有了这个标签，Google 可以在搜索结果中展示更丰富的信息（如作者头像、发布日期），AI 可以更准确地判断内容的类型和时效性。</p>
+</div>
+
+<!-- ── FAQPage Schema ── -->
+<div class="term">
+  <div class="name">FAQPage Schema</div>
+  <div class="en">schema.org/FAQPage</div>
+  <div class="tags"><span>Schema 类型</span></div>
+  <p><strong>大白话：</strong>告诉搜索引擎"页面中有常见问答，Q 是什么，A 是什么"。带 FAQ Schema 的页面在 Google 搜索结果中会展开显示问答，占用更大的页面空间。对 AI 搜索引擎来说，FAQ Schema 让它可以直接提取"这个问题 → 这个答案"的对应关系。</p>
+</div>
+
+<!-- ── ImageObject Schema ── -->
+<div class="term">
+  <div class="name">ImageObject Schema</div>
+  <div class="en">schema.org/ImageObject</div>
+  <div class="tags"><span>Schema 类型</span><span>图片 SEO 核心</span></div>
+  <p><strong>大白话：</strong>告诉搜索引擎"这张图片是什么内容、什么格式、多大尺寸"。这对图片搜索排名和 Google Lens 等视觉搜索至关重要。我们的系统为每篇文章生成 4 个视角（正面/背面/侧面/特写）的 ImageObject schema。</p>
+</div>
+
+<!-- ── Product Schema ── -->
+<div class="term">
+  <div class="name">Product Schema</div>
+  <div class="en">schema.org/Product</div>
+  <div class="tags"><span>Schema 类型</span></div>
+  <p><strong>大白话：</strong>告诉搜索引擎"这是一个产品，它的名字、材质、颜色、用途是什么"。主要用于电商产品页。我们的评估报告标记了 Product Schema 缺失，但对 B2B 文章页来说这不一定是必需的——文章页不是产品详情页。</p>
+</div>
+
+<!-- ── llms.txt ── -->
+<div class="term">
+  <div class="name">llms.txt</div>
+  <div class="en">LLMs.txt — AI-readable site summary</div>
+  <div class="tags"><span>新兴标准</span><span>P0 缺失→已修复</span></div>
+  <p><strong>大白话：</strong>一个放在网站根目录的文本文件（<code>/llms.txt</code>），专门写给 AI 模型看的"网站简介+导航"。类似于 <code>robots.txt</code> 是给搜索引擎爬虫看的，<code>llms.txt</code> 是给 ChatGPT、Claude 等大语言模型看的。</p>
+  <p><strong>类比：</strong><code>robots.txt</code> 是贴在门上的"允许/禁止进入"告示；<code>llms.txt</code> 是放在门口的"这栋楼里有什么、怎么走"的导览手册。</p>
+  <p><strong>为什么重要：</strong>当 AI 需要了解"这个网站上有什么内容"时，<code>llms.txt</code> 是最直接的入口。没有它，AI 需要自己爬取和推断网站结构，效率低且容易遗漏。</p>
+  <p>示例：</p>
+  <pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;overflow-x:auto;font-size:0.82em;"># Custom Medals Resource
+&gt; B2B promotional gift manufacturing guides and product comparisons.
+
+## 主要页面
+- /guides/custom-marathon-medals: 马拉松奖牌选购指南
+- /guides/custom-badges: 定制徽章材质对比
+
+## 结构化数据
+- 所有文章页包含 Article + FAQPage + ImageObject JSON-LD Schema
+- 图片使用 WebP 格式，配备 alt 文本</pre>
+</div>
+
+<!-- ── robots.txt ── -->
+<div class="term">
+  <div class="name">robots.txt + AI Crawler 配置</div>
+  <div class="en">robots.txt — Crawler access control</div>
+  <div class="tags"><span>技术配置</span><span>P1</span></div>
+  <p><strong>大白话：</strong>网站根目录下的一个文件，告诉搜索引擎和 AI 爬虫"哪些页面可以看，哪些不可以"。</p>
+  <p>AI 搜索引擎有自己专属的爬虫名称，和你熟悉的 Googlebot 不同：</p>
+  <table>
+    <tr><th>爬虫名</th><th>所属</th><th>用途</th></tr>
+    <tr><td>GPTBot</td><td>OpenAI</td><td>ChatGPT 训练和实时搜索</td></tr>
+    <tr><td>ChatGPT-User</td><td>OpenAI</td><td>ChatGPT 用户手动触发的网页访问</td></tr>
+    <tr><td>PerplexityBot</td><td>Perplexity</td><td>Perplexity AI 搜索结果</td></tr>
+    <tr><td>ClaudeBot / anthropic-ai</td><td>Anthropic</td><td>Claude 训练和搜索</td></tr>
+    <tr><td>Google-Extended</td><td>Google</td><td>Gemini + AI Overviews</td></tr>
+    <tr><td>Bingbot</td><td>Microsoft</td><td>Copilot 搜索</td></tr>
+  </table>
+  <p><strong>面试时说：</strong>"如果 robots.txt 屏蔽了 GPTBot，ChatGPT 就无法访问你的网站内容——这对于 AI SEO 来说是致命的。很多人配置了 robots.txt 给 Googlebot 放行，但完全不知道还有 AI 爬虫需要单独配置。"</p>
+</div>
+
+<!-- ── EEAT ── -->
+<div class="term">
+  <div class="name">E-E-A-T</div>
+  <div class="en">Experience, Expertise, Authoritativeness, Trustworthiness</div>
+  <div class="tags"><span>Google 框架</span><span>质量评估标准</span></div>
+  <p><strong>大白话：</strong>Google 用来评估"内容质量靠不靠谱"的四大维度，是 Google 搜索质量评估指南的核心框架。</p>
+  <table>
+    <tr><th>字母</th><th>含义</th><th>大白话</th><th>在你的项目中</th></tr>
+    <tr>
+      <td><strong>E</strong></td>
+      <td>Experience（经验）</td>
+      <td>写文章的人真的做过这件事吗？</td>
+      <td>Researcher Agent 设定"10 年外贸经验"的 backstory</td>
+    </tr>
+    <tr>
+      <td><strong>E</strong></td>
+      <td>Expertise（专业度）</td>
+      <td>内容是否展示了专业知识？</td>
+      <td>Writer 被要求正确使用 B2B 术语（die-casting, electroplating 等）</td>
+    </tr>
+    <tr>
+      <td><strong>A</strong></td>
+      <td>Authoritativeness（权威性）</td>
+      <td>这个来源在这个领域是否被认可？</td>
+      <td>Writer 被要求引用行业标准（ASTM）+ 每条数据标注来源</td>
+    </tr>
+    <tr>
+      <td><strong>T</strong></td>
+      <td>Trustworthiness（可信度）</td>
+      <td>内容是否准确、透明、不编造？</td>
+      <td>Reviewer eeat_trust 维度：检测到编造数据 = 直接 0 分 = 一票否决</td>
+    </tr>
+  </table>
+  <p><strong>面试时说：</strong>"我们在系统中内建了 E-E-A-T 检测——不是靠人检查，而是让 Reviewer Agent 专门评估 Experience、Expertise、Authoritativeness 和 Trustworthiness 四个维度，发现虚构数据直接 0 分。这比人工审核更快、更一致。"</p>
+</div>
+
+<!-- ── Content Blocks ── -->
+<div class="term">
+  <div class="name">Content Block Patterns（内容块模式）</div>
+  <div class="en">6 AI-friendly content block types</div>
+  <div class="tags"><span>ai-seo 框架</span><span>Structure</span></div>
+  <p><strong>大白话：</strong>ai-seo skill 定义了 6 种"AI 最喜欢的内容格式"。不是随意写，而是有意识地选择"这一段用表格、这一段用编号列表、这一段用定义"。AI 更容易从结构化内容块中提取信息。</p>
+  <table>
+    <tr><th>类型</th><th>适用场景</th><th>示例（在你的文章里）</th></tr>
+    <tr>
+      <td>Definition block</td>
+      <td>文章开头直接回答问题</td>
+      <td>Opening 58 words 直接回答 "what to look for"</td>
+    </tr>
+    <tr>
+      <td>Step-by-step block</td>
+      <td>"怎么做"类问题</td>
+      <td>"How to Evaluate Medal Quality" = 5 步编号列表</td>
+    </tr>
+    <tr>
+      <td>Comparison table</td>
+      <td>"X vs Y"对比</td>
+      <td>"Custom vs Stock Medals" = 5 行对比表</td>
+    </tr>
+    <tr>
+      <td>FAQ block</td>
+      <td>问答类内容</td>
+      <td>5 个 FAQ，每个以 ## 标题呈现</td>
+    </tr>
+    <tr>
+      <td>Statistic block</td>
+      <td>引用数据支持论点</td>
+      <td>"锌合金密度 6.6 g/cm³" + 来源标注</td>
+    </tr>
+    <tr>
+      <td>Pros/Cons block</td>
+      <td>评估/选择类问题</td>
+      <td>（当前未独立使用，评估报告标记为 GAP）</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ── Freshness Signals ── -->
+<div class="term">
+  <div class="name">Freshness Signals（时效性信号）</div>
+  <div class="en">Content freshness / recency signals</div>
+  <div class="tags"><span>Authority</span><span>P1</span></div>
+  <p><strong>大白话：</strong>AI 和搜索引擎会判断"这个内容还新鲜吗"——如果是 3 年前的旧文且没有更新标记，权重会下降。时效性信号包括：</p>
+  <ul>
+    <li>"Last updated: [日期]" —— 文章最后更新时间</li>
+    <li>当前年份的引用 —— 如果文中有统计数据，应注明是哪一年的</li>
+    <li>定期刷新 —— 6 个月以上的文章自动标记为"需要更新"</li>
+  </ul>
+  <p><strong>类比：</strong>就像你不会引用一本 1995 年的电脑配置指南来选购 2026 年的笔记本。AI 也是一样的逻辑。</p>
+</div>
+
+<!-- ── Third-Party Presence ── -->
+<div class="term">
+  <div class="name">Third-Party Presence（第三方存在）</div>
+  <div class="en">Brand presence on third-party platforms</div>
+  <div class="tags"><span>Presence</span><span>P2</span></div>
+  <p><strong>大白话：</strong>你的品牌/内容是否存在于 AI 训练数据中常见的第三方网站上。AI 引用 Wikipedia（7.8%）和 Reddit（1.8%）的概率远高于引用你的品牌官网。如果你的品牌在 Wikipedia、Reddit、行业媒体、Quora、YouTube 都没有存在，AI 就"不认识"你。</p>
+  <p>这个 Pillar 主要面向<strong>真实运营中的网站</strong>而非内容生产工具——但如果你产出的文章未来要发布到真实网站，这就是必须考虑的问题。</p>
+</div>
+
+<!-- ── AI Visibility Monitoring ── -->
+<div class="term">
+  <div class="name">AI Visibility Monitoring（AI 可见度监控）</div>
+  <div class="en">Share of AI Voice / Citation Rate / Brand Mention Tracking</div>
+  <div class="tags"><span>Presence</span><span>P2</span></div>
+  <p><strong>大白话：</strong>衡量"AI 搜索引擎有多频繁地提到你的品牌/内容"的指标和方法。</p>
+  <ul>
+    <li><strong>AI Overview Presence</strong>：你的内容是否出现在 Google AI Overviews 的摘要中</li>
+    <li><strong>Brand Citation Rate</strong>：AI 提到你品牌的频率</li>
+    <li><strong>Share of AI Voice</strong>：在你的行业/关键词中，你被 AI 引用的占比（vs 竞争对手）</li>
+    <li><strong>Citation Sentiment</strong>：AI 提到你时是正面还是负面</li>
+  </ul>
+  <p>现有工具：Semrush、Ahrefs（传统 SEO）+ Peec AI、Otterly、ZipTie（专门做 AI visibility）。</p>
+</div>
+
+<!-- ── Guardrails ── -->
+<div class="term">
+  <div class="name">Guardrails / H2 内容禁令</div>
+  <div class="en">Content Boundaries / Prompt Guardrails</div>
+  <div class="tags"><span>项目独创</span><span>安全的硬护栏</span></div>
+  <p><strong>大白话：</strong>在 Planner prompt 中硬编码了一条规则——H2/H3/FAQ 标题中<strong>绝对不允许出现</strong>以下术语：MOQ（最小起订量）、Lead Time（交期）、Customization Process（定制流程）、Payment Terms（付款条款）、Certification（认证）、Pricing（价格）、Shipping（物流）。</p>
+  <p><strong>为什么这么做：</strong>如果标题中出现交易性术语，文章会被搜索引擎判定为"低质量商业广告"而非"有帮助的内容指南"。这是一种<strong>防止内容退化为营销垃圾</strong>的硬护栏。评估报告评价这是项目超出 ai-seo skill 框架的<strong>创新点</strong>。</p>
+</div>
+
+<!-- ── Quality Loop ── -->
+<div class="term">
+  <div class="name">自适应质量闭环</div>
+  <div class="en">Adaptive Quality Feedback Loop</div>
+  <div class="tags"><span>项目独创</span><span>差异化优势</span></div>
+  <p><strong>大白话：</strong>ai-seo skill 教你怎么写出 AI 喜欢的内容，但<strong>不告诉你写完了怎么验证质量</strong>。我们的系统独创了"Write → Review → Score → Fix → Re-review"的自动循环：文章写完后，Reviewer Agent 按 7 个维度打分，低于 48/70 就带着修改建议回去重写，直到通过为止。</p>
+  <p>这是从"内容规范"到"质量保证"的跨越——相当于有了一个永不疲倦的内容编辑，每篇文章都经过同行评审级别的质量控制。</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- PART 3: IMAGE SEO MODULE -->
+<!-- ============================================================ -->
+<h2 id="part3">第三部分：图片 SEO 模块 — 完整工作流程拆解</h2>
+
+<div class="summary">
+  <p><strong>核心价值：</strong>很多人只知道"给图片加 alt 文本"，但 AI 时代的图片 SEO 远比这个复杂。一个完整的图片 SEO 链条 = 视觉分析识别产品 → 生成描述性 alt 文本 → 推荐 WebP 格式 → 标准化的文件名 → JSON-LD ImageObject Schema → llms.txt 声明。我们的系统<strong>自动化了整个链条</strong>。</p>
+</div>
+
+<h3>3.1 整体数据流</h3>
+<div class="flow">
+  <div class="node green">用户上传<br>产品图片</div>
+  <div class="arrow">→</div>
+  <div class="node">视觉模型<br>分析图片</div>
+  <div class="arrow">→</div>
+  <div class="node purple">Researcher<br>提取产品信息</div>
+  <div class="arrow">→</div>
+  <div class="node">Planner<br>规划内容结构</div>
+  <div class="arrow">→</div>
+  <div class="node orange">Writer<br>生成文章+图片SEO</div>
+  <div class="arrow">→</div>
+  <div class="node green">输出: 文章<br>+ alt文本 + webp<br>+ ImageObject Schema<br>+ llms.txt</div>
+</div>
+
+<h3>3.2 逐步详解</h3>
+
+<!-- Step 1 -->
+<div class="card good">
+  <h4>Step 1 — 视觉模型分析图片（_analyze_images）</h4>
+  <p><strong>代码位置：</strong><code>crew.py</code> 第 21-89 行</p>
+  <p><strong>做了什么：</strong></p>
+  <ol>
+    <li>用户上传产品图片 → 系统读取文件并转为 base64 编码</li>
+    <li>构造一个多模态请求（图片 + prompt text）发给视觉模型（如 gpt-4o、glm-4v）</li>
+    <li>视觉模型返回 JSON，包含：产品名称（中文 2-6 字）、类别（奖牌/徽章/硬币）、颜色、材质、风格、核心卖点、目标受众、使用场景、工艺观察</li>
+  </ol>
+  <p><strong>为什么重要：</strong>DeepSeek 是纯文本模型，不能"看"图片。必须配置一个独立的视觉模型才能从产品图片中提取信息。这模拟了真实 B2B 外贸场景——你收到客户的样品照片，需要从中识别产品规格。</p>
+  <p><strong>配置方式：</strong>在 <code>.env</code> 中设置 <code>VISION_MODEL_NAME</code>、<code>VISION_API_KEY</code>、<code>VISION_BASE_URL</code>。如果没配置，系统会跳过图片分析，Researcher 凭经验推断产品信息。</p>
+</div>
+
+<!-- Step 2 -->
+<div class="card good">
+  <h4>Step 2 — Researcher 将图片分析结果作为"地面真相"</h4>
+  <p><strong>代码位置：</strong><code>tasks.py</code> research_task description 的 Step 0/1</p>
+  <p><strong>做了什么：</strong></p>
+  <ul>
+    <li>Research task 收到图片分析结果后，将其作为 <strong>ground truth</strong>（地面真相，即"这绝对是真的"）来构建 <code>product_info</code> 对象</li>
+    <li>如果没有图片，Researcher 根据关键词和材质推断产品信息</li>
+    <li>这个 <code>product_info</code> 会传递给后续的 Planner 和 Writer，确保整篇文章描述的产品和图片中的真实产品一致</li>
+  </ul>
+  <p><strong>为什么重要：</strong>如果文章描述的产品和图片不一致（比如文章说的是金色奖牌，图片是银色徽章），这篇文章就没有可信度。图片分析 → product_info 的链路确保了内容与视觉一致。</p>
+</div>
+
+<!-- Step 3 -->
+<div class="card good">
+  <h4>Step 3 — Writer 生成图片 SEO 数据（4 个视图 + alt 文本 + WebP）</h4>
+  <p><strong>代码位置：</strong><code>tasks.py</code> writing_task description 的 Step 3</p>
+  <p><strong>做了什么：</strong>Writer 在文章末尾生成一个专门的 "Image SEO Data" 表格，为 4 个标准产品视图输出：</p>
+  <table>
+    <tr><th>视图</th><th>Alt 文本要求</th><th>文件名格式</th><th>格式</th></tr>
+    <tr>
+      <td>Front（正面）</td>
+      <td rowspan="4">自然英文、≤125 字符、描述图片具体展示的内容（颜色、材质纹理、雕刻细节）、自然融入一次主关键词</td>
+      <td rowspan="4"><code>[品类]-[品牌/关键词]-[视图].webp</code><br>如 <code>medal-custom-marathon-gold-front.webp</code></td>
+      <td rowspan="4">webp</td>
+    </tr>
+    <tr><td>Back（背面）</td></tr>
+    <tr><td>Side（侧面）</td></tr>
+    <tr><td>Detail（特写）</td></tr>
+  </table>
+  <p><strong>Alt 文本为什么 ≤125 字符：</strong>大多数屏幕阅读器和搜索引擎在 125 字符处截断 alt 文本。超过这个长度的部分不会被读取。</p>
+  <p><strong>为什么强制 WebP：</strong>Google 明确推荐 WebP 格式——它比 JPEG 小 25-35% 但画质相当。页面加载速度是 SEO 排名因素之一，图片越小加载越快。</p>
+  <p><strong>文件名为什么用小写+连字符：</strong>搜索引擎将连字符识别为词分隔符，下划线不识别。小写避免大小写敏感导致的 404 问题。</p>
+</div>
+
+<!-- Step 4 -->
+<div class="card good">
+  <h4>Step 4 — Writer 生成 JSON-LD 结构化数据</h4>
+  <p><strong>代码位置：</strong><code>tasks.py</code> writing_task description 的 Step 4</p>
+  <p><strong>做了什么：</strong>在 "JSON-LD Structured Data" 部分生成 3 种 Schema：</p>
+  <ol>
+    <li><strong>Article Schema：</strong>标题、作者、发布日期、描述 → 让搜索引擎知道这是文章</li>
+    <li><strong>FAQPage Schema：</strong>所有 FAQ 问答的 mainEntity 数组 → 让搜索引擎提取问答对</li>
+    <li><strong>ImageObject Schema：</strong>主产品图片的 URL、描述、尺寸 → 让搜索引擎理解图片内容</li>
+  </ol>
+  <p>以及一个 "AI Engine Visibility" 检查表和 "/llms.txt" 内容块。</p>
+</div>
+
+<!-- Step 5 -->
+<div class="card good">
+  <h4>Step 5 — crew.py 提取和保存图片 SEO 数据</h4>
+  <p><strong>代码位置：</strong><code>crew.py</code> <code>_extract_image_seo()</code> 函数（第 280-301 行）</p>
+  <p><strong>做了什么：</strong>从 Writer 输出的完整 Markdown 文章中，解析 "Image SEO Data" 部分的表格，提取每个视图的 alt 文本和文件名，以结构化数据返回（在终端摘要中展示数量）。</p>
+</div>
+
+<h3>3.3 为什么整个图片 SEO 模块对 SEO 至关重要</h3>
+
+<div class="card warn">
+  <h4>不只是"好看"——图片 SEO 的 4 层价值</h4>
+  <table>
+    <tr><th>层级</th><th>价值</th><th>说明</th></tr>
+    <tr>
+      <td>1. 可访问性</td>
+      <td>屏幕阅读器用户</td>
+      <td>盲人或视障用户依赖 alt 文本"听"图片内容。好的 alt 文本 = 好的无障碍体验</td>
+    </tr>
+    <tr>
+      <td>2. 图片搜索排名</td>
+      <td>Google 图片搜索</td>
+      <td>alt 文本 + 有意义的文件名 + WebP = 在 Google 图片搜索结果中更高排名</td>
+    </tr>
+    <tr>
+      <td>3. 页面加载速度</td>
+      <td>Core Web Vitals</td>
+      <td>WebP 比 JPEG 小 25-35%，更快加载 = 更好的 Core Web Vitals = SEO 加分</td>
+    </tr>
+    <tr>
+      <td>4. AI 视觉搜索</td>
+      <td>Google Lens, ChatGPT Vision</td>
+      <td>当用户用图片搜索时，ImageObject Schema + alt 文本让 AI 能精确理解图片内容并推荐你的页面</td>
+    </tr>
+  </table>
+</div>
+
+<h3>3.4 代码中图片 SEO 的完整配置</h3>
+<p>图片 SEO 功能涉及 4 个文件的协同：</p>
+<table>
+  <tr><th>文件</th><th>作用</th></tr>
+  <tr>
+    <td><code>config.py</code></td>
+    <td>配置视觉模型参数（VISION_MODEL_NAME, VISION_API_KEY, VISION_BASE_URL, VISION_ENABLED）</td>
+  </tr>
+  <tr>
+    <td><code>crew.py</code></td>
+    <td><code>_analyze_images()</code> — 调用视觉模型；<code>_extract_image_seo()</code> — 从文章解析图片 SEO 数据；<code>run_seo_pipeline()</code> — 将图片分析结果注入 research_task</td>
+  </tr>
+  <tr>
+    <td><code>tasks.py</code></td>
+    <td>research_task Step 0 接收图片分析结果；writing_task Step 3 生成 4 视图 alt 文本+WebP 文件名+ImageObject Schema</td>
+  </tr>
+  <tr>
+    <td><code>.env</code></td>
+    <td>存储视觉模型的 API key 和 endpoint</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- PART 4: CODE MAPPING -->
+<!-- ============================================================ -->
+<h2 id="part4">第四部分：术语 → 代码对照表</h2>
+<p style="color:var(--muted);">面试时被问"你们的系统怎么实现 XX 的？"，可以直接查这张表。</p>
+
+<table>
+  <tr><th>术语/概念</th><th>在项目中的实现位置</th><th>怎么实现的</th></tr>
+  <tr>
+    <td>EEAT 检测</td>
+    <td><code>tasks.py</code> review_task<br><code>agents.py</code> writer backstory</td>
+    <td>Reviewer 的 eeat_trust 维度（编造数据 = 0 分）+ Writer 的 backstory 内置"never fabricate data"</td>
+  </tr>
+  <tr>
+    <td>来源引用</td>
+    <td><code>tasks.py</code> writing_task Step 2 规则</td>
+    <td>"CRITICAL: Every statistic MUST cite its source using 'According to [source]' or '[Source]:' format"</td>
+  </tr>
+  <tr>
+    <td>作者署名</td>
+    <td><code>tasks.py</code> writing_task Step 2 规则</td>
+    <td>"Author block at the end: 'About the Author | [N]+ years in B2B promotional gift manufacturing'"</td>
+  </tr>
+  <tr>
+    <td>Schema Markup</td>
+    <td><code>tasks.py</code> writing_task Step 4</td>
+    <td>Writer 生成 Article + FAQPage + ImageObject JSON-LD</td>
+  </tr>
+  <tr>
+    <td>llms.txt</td>
+    <td><code>tasks.py</code> writing_task Step 4.3</td>
+    <td>Writer 生成一个 markdown code block 包含 llms.txt 内容</td>
+  </tr>
+  <tr>
+    <td>Content Blocks</td>
+    <td><code>tasks.py</code> writing_task Step 1</td>
+    <td>Writer 的 outline 中每个 H2 指定 content_block_type（definition/comparison_table/step_list/faq/stat_block/pros_cons）</td>
+  </tr>
+  <tr>
+    <td>H2 Guardrails</td>
+    <td><code>tasks.py</code> planning_task</td>
+    <td>"CRITICAL — H2/FAQ Content Boundaries: The following terms MUST NOT appear..."</td>
+  </tr>
+  <tr>
+    <td>图片 SEO 全流程</td>
+    <td><code>crew.py</code> _analyze_images<br><code>crew.py</code> _extract_image_seo<br><code>tasks.py</code> research/writing tasks</td>
+    <td>视觉分析 → product_info → 4 视图 alt 文本 → WebP → ImageObject Schema → llms.txt</td>
+  </tr>
+  <tr>
+    <td>自适应修改循环</td>
+    <td><code>crew.py</code> run_seo_pipeline</td>
+    <td>while 循环：Reviewer 评分 → 不通过 → 提取 fix_suggestions → 重新调 Writer+Reviewer</td>
+  </tr>
+  <tr>
+    <td>7 维评分</td>
+    <td><code>tasks.py</code> review_task</td>
+    <td>search_intent_match, structure, eeat_trust, so_what_test, specificity, ai_citability, clarity_readability</td>
+  </tr>
+  <tr>
+    <td>"which means" 桥梁</td>
+    <td><code>tasks.py</code> writing_task Step 2<br><code>agents.py</code> writer backstory</td>
+    <td>"Feature + 'which means...' benefit bridge on every product feature"</td>
+  </tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- PART 5: INTERVIEW Q&A -->
+<!-- ============================================================ -->
+<h2 id="part5">第五部分：面试模拟 — 常见追问 &amp; 回答思路</h2>
+
+<div class="card">
+  <h4>Q1: "你们的 AI SEO 系统和普通的 SEO 工具有什么区别？"</h4>
+  <p><strong>回答思路：</strong>三个区别。第一，<strong>自动化闭环</strong>——不是生成建议让人改，而是 Agent 自己改、自己审到通过。第二，<strong>面向 AI 引用优化</strong>——不只是"在 Google 排第一"，而是让 ChatGPT/Perplexity 在回答问题时引用我们的内容。第三，<strong>多 Agent 协同</strong>——研究、策划、写作、评审各自独立，可以单独调试，而不是一个大 prompt 一把梭。</p>
+</div>
+
+<div class="card">
+  <h4>Q2: "你提到引用 Princeton 研究，那 9 个方法你们系统落地了几个？"</h4>
+  <p><strong>回答思路：</strong>直接说数字：9 个中落地了 7 个（除了 Add Quotations 和 Unique Vocabulary 是内容生成层面的，其余 7 个方法都通过 prompt 工程落地了，包括最有效的 Cite Sources +40% 和 Add Statistics +37%）。关键词堆砌也做了规避（含 -10% 惩罚的警示）。可以补充：数据引用是"软性 OKR"——我们要求引用但不编造来源。</p>
+</div>
+
+<div class="card">
+  <h4>Q3: "EEAT 是 Google 什么级别的标准？你们怎么检测 Experience？"</h4>
+  <p><strong>回答思路：</strong>EEAT 是 Google 搜索质量评估指南的核心框架（虽然不是直接排名因素，但质量评估结果会用于训练排名算法）。Experience 是我们最"人格化"的维度——Researcher Agent 的 backstory 设为"10 年外贸经验"，Writer 会写作者署名块（"X 年 B2B 促销礼品行业经验"），用角色设定和内容模板来体现经验感。坦诚说 Experience 是最难量化的维度，目前靠 prompt 而非算法检测。</p>
+</div>
+
+<div class="card">
+  <h4>Q4: "修复循环的触发条件是什么？最多跑几轮？"</h4>
+  <p><strong>回答思路：</strong>触发条件：总分 &lt; 48/70 或任何单维度 &lt; 6 分或 EEAT = 0。最多 5 轮（配置中 MAX_REVISION_ROUNDS = 5）。每轮只重跑 Writer + Reviewer（不重跑 Researcher 和 Planner，因为研究基础不变），节省 API 调用成本。实际测试中最多 2 轮就通过了。</p>
+</div>
+
+<div class="card">
+  <h4>Q5: "Schema Markup 为什么要放在 Prompt 里生成而不是代码拼接？"</h4>
+  <p><strong>回答思路：</strong>正面回答：当前的实现确实是最简单的做法——让 LLM 在写文章的同时生成 Schema。它的优势是灵活性强（Schema 和文章内容天然一致）。但这个方案有个风险：LLM 可能输出不合法的 JSON。更稳健的做法是代码层面从文章提取 FAQ 列表 → 用 Python 的 json 库构造 Schema → 确保格式合法。这是一个 pragmatic 的选择，如果部署到生产环境，建议重构为代码拼接以减少 LLM 幻读风险。</p>
+</div>
+
+<div class="card">
+  <h4>Q6: "这个系统能直接部署到生产环境吗？还缺什么？"</h4>
+  <p><strong>回答思路：</strong>坦诚说"不能直接部署"。四个缺失：1) Schema Markup 和 llms.txt 还只是文章中的文本块，需要前端发布时实际嵌入 HTML；2) 需要对接外部关键词数据库（如 Semrush/Ahrefs API），目前靠 LLM 知识估计 Volume 和 KD；3) 需要实际让运营团队跑 20 篇文章 → 发布 → 手动查 ChatGPT/Perplexity 引用率来验证效果；4) 需要建一个禁止编造的公开数据源库（ASTM、ISO 等标准）。</p>
+</div>
+
+<div class="card">
+  <h4>Q7: "图片 SEO 模块有什么实际价值？"</h4>
+  <p><strong>回答思路：</strong>三个价值：1) <strong>效率</strong>——写一篇文章时手动处理 4 张图需要 15-20 分钟（alt 文本、文件名、格式转换），自动化后零人工；2) <strong>质量一致性</strong>——人工容易忘记 alt 文本或用中文写 alt，系统强制执行标准（≤125 chars、英文、含关键词、WebP）；3) <strong>搜索可见度</strong>——图片搜索是独立流量来源（Google 图片搜索 + Google Lens），好的 alt+webp+schema 能让产品图片出现在图片搜索结果中。</p>
+</div>
+
+<div class="card">
+  <h4>Q8: "如果视觉模型分析错了产品信息怎么办？"</h4>
+  <p><strong>回答思路：</strong>三重保险：1) Prompt 约束——视觉模型的 prompt 限定输出格式和字段，减少随意发挥空间；2) Researcher 校验——视觉分析结果只是"ground truth"输入，Researcher 还会结合关键词和材质信息进行校验和修正；3) Reviewer 终审——如果产品描述和文章主题不一致，Reviewer 的 search_intent_match 维度会扣分。但坦诚地说，如果视觉模型真的把"徽章"识别成"奖牌"，缺少一个硬编码的校验机制——这可以作为一个改进点。</p>
+</div>
+
+<hr style="border-color:var(--border);margin:48px 0;">
+
+<div class="summary">
+  <p><strong>总结</strong></p>
+  <p>核心区别就一句话：</p>
+  <p style="font-size:1.1em;"><strong>传统 SEO</strong> = 让 Google 搜索结果的第 1 页有你。<br>
+  <strong>AI SEO</strong> = 让 ChatGPT/Perplexity/Gemini 回答用户问题时<strong>提到你的名字和内容</strong>。</p>
+  <p style="margin-top:12px;color:var(--muted);">手段不同，但目标一致——让你的内容被发现。区别只在于"被发现"的渠道从"传统搜索结果的蓝色链接"变成了"AI 回答中的一个引用来源"。</p>
+</div>
+
+<p style="text-align:center;color:var(--muted);margin-top:40px;font-size:0.85em;">
+  配套文件：<a href="AI-SEO-EVALUATION.md">AI-SEO-EVALUATION.md</a> · <a href="seo-crew-agent-deep-dive.html">项目深度剖析</a><br>
+  生成时间：2026-05-27 · 适用于 SEO Crew Agent 项目面试准备
+</p>
+
+</body>
+</html>
