@@ -1,0 +1,23 @@
+# Environment secrets
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Output (generated articles, history, temp images, logs)
+output/
+*.log
+crew.log
+.tmp/
+.tmp
+
+# Internal development documents (not for public)
+docs/internal/
+
+# IDE / OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

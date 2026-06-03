@@ -2,7 +2,8 @@
 SEO Agent — 入口脚本
 用法：
     python main.py                          # 交互式输入
-    python main.py --keyword "custom medals" --type "corporate" --material "zinc alloy"
+    python main.py --keyword "custom medals" --customer-type "corporate" --material "zinc alloy" --images img1.jpg img2.png
+    python main.py --keyword "custom medals" --customer-type "corporate" --material "zinc alloy" --images img1.jpg img2.png --notes "环保材质"
 """
 import sys
 import argparse
@@ -27,23 +28,31 @@ def interactive_mode():
     customer_type = input("客户类型 (如 corporate, sports club): ").strip()
     material = input("产品材质 (如 zinc alloy, iron, acrylic): ").strip()
 
-    print("\n提示: 请将产品图片放在项目目录下，然后在下方输入文件路径")
-    print("（如无图片，直接回车跳过）\n")
+    print("\n请将产品图片放在项目目录下，然后输入文件路径")
+    print("（图片为必填项，至少提供 1 张产品图）\n")
 
     images_input = input("图片路径 (多个用逗号分隔): ").strip()
     image_paths = [p.strip() for p in images_input.split(",") if p.strip()] if images_input else []
+
+    if not image_paths:
+        print("错误: 产品图片为必填项。请至少提供 1 张图片路径。")
+        return
+
+    notes = input("\n补充信息 (如特殊工艺、客户要求等，可选，直接回车跳过): ").strip()
 
     print(f"\n启动 Agent 流水线...")
     print(f"  关键词: {seo_keyword}")
     print(f"  客户类型: {customer_type}")
     print(f"  材质: {material}")
-    print(f"  图片: {len(image_paths)} 张\n")
+    print(f"  图片: {len(image_paths)} 张")
+    print(f"  补充信息: {notes if notes else '(无)'}\n")
 
     result = run_seo_pipeline(
-        product_image_paths=image_paths or None,
+        product_image_paths=image_paths,
         seo_keyword=seo_keyword,
         customer_type=customer_type,
         material=material,
+        notes=notes,
     )
 
     _print_summary(result)
@@ -69,16 +78,26 @@ def _print_summary(result: dict):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="B2B SEO Content Agent")
     parser.add_argument("--keyword", type=str, help="SEO target keyword")
-    parser.add_argument("--type", type=str, default="", help="Customer type")
-    parser.add_argument("--material", type=str, default="", help="Product material")
+    parser.add_argument("--customer-type", type=str, default="", help="Customer type (e.g., corporate, sports club)")
+    parser.add_argument("--material", type=str, default="", help="Product material (e.g., zinc alloy, iron)")
+    parser.add_argument("--images", nargs="+", default=[], help="Product image file paths (required)")
+    parser.add_argument("--notes", type=str, default="", help="Supplementary notes (optional)")
     args = parser.parse_args()
 
     if args.keyword:
-        # 命令行模式
+        # 命令行模式 — 校验必填参数
+        if not args.customer_type:
+            parser.error("--customer-type is required in CLI mode")
+        if not args.material:
+            parser.error("--material is required in CLI mode")
+        if not args.images:
+            parser.error("--images is required in CLI mode (at least 1 image)")
         result = run_seo_pipeline(
             seo_keyword=args.keyword,
-            customer_type=getattr(args, "type", ""),
+            customer_type=args.customer_type,
             material=args.material,
+            product_image_paths=args.images,
+            notes=args.notes,
         )
         _print_summary(result)
     else:

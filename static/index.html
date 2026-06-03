@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Content Agent — B2B Article Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-deep: #090c11;
+    --bg-panel: #111620;
+    --bg-card: #161d2a;
+    --bg-input: #0d1320;
+    --border: #1e2a3a;
+    --border-active: #2d4a5e;
+    --text-primary: #e8edf4;
+    --text-secondary: #8899b4;
+    --text-muted: #546a82;
+    --accent: #00c897;
+    --accent-glow: rgba(0,200,151,0.18);
+    --amber: #f59e0b;
+    --amber-glow: rgba(245,158,11,0.18);
+    --red: #ef4444;
+    --red-glow: rgba(239,68,68,0.18);
+    --blue: #60a5fa;
+    --purple: #a78bfa;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --transition: 180ms cubic-bezier(0.4,0,0.2,1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg-deep); color:var(--text-primary);
+    font-family:var(--font-body); line-height:1.6; min-height:100vh;
+    background-image:
+      radial-gradient(ellipse at 30% 0%, rgba(0,200,151,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 100%, rgba(96,165,250,0.03) 0%, transparent 60%);
+  }
+
+  /* ── Status Bar ── */
+  #status-bar{
+    position:fixed; top:0; left:0; right:0; z-index:200;
+    background:var(--bg-card); border-bottom:1px solid var(--border);
+    padding:.5rem 2rem; display:none; align-items:center; gap:1rem;
+    font-size:.82rem; color:var(--text-secondary);
+  }
+  #status-bar .pulse{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse .8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.35}}
+  #status-bar .stage{color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+  #status-bar .detail{color:var(--text-muted);flex:1}
+  #status-bar .elapsed{font-family:var(--font-mono);color:var(--text-muted)}
+
+  /* ── Layout ── */
+  .app{max-width:1440px;margin:0 auto;padding:1.5rem 2rem 3rem}
+  header{padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:2rem}
+  header .logo{font-family:var(--font-display);font-size:2rem;color:var(--text-primary);letter-spacing:-.02em}
+  header .logo span{color:var(--accent)}
+  header .subtitle{color:var(--text-secondary);font-size:.9rem;margin-top:.25rem;font-weight:400}
+  .grid{display:grid;grid-template-columns:380px 1fr;gap:1.5rem}
+
+  /* ── Cards ── */
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:border-color var(--transition)}
+  .card:hover{border-color:var(--border-active)}
+  .card-header{font-family:var(--font-display);font-size:1.15rem;margin-bottom:1.2rem;color:var(--text-primary);letter-spacing:-.01em}
+
+  /* ── Inputs ── */
+  label{display:block;font-size:.8rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem;margin-top:1rem}
+  label:first-child{margin-top:0}
+  input,textarea,select{width:100%;padding:.65rem .85rem;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-primary);font-family:var(--font-body);font-size:.9rem;transition:border-color var(--transition),box-shadow var(--transition);outline:none}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+  input::placeholder{color:var(--text-muted)}
+  textarea{resize:vertical;min-height:60px}
+
+  /* ── Buttons ── */
+  .btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.9rem;font-weight:600;cursor:pointer;transition:all var(--transition);text-decoration:none;white-space:nowrap}
+  .btn-primary{width:100%;margin-top:1.2rem;justify-content:center;background:var(--accent);color:#000;font-size:.95rem;padding:.85rem;letter-spacing:.01em}
+  .btn-primary:hover{background:#00e0a8;box-shadow:0 4px 20px var(--accent-glow);transform:translateY(-1px)}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+  .btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text-primary);padding:.45rem .9rem;font-size:.8rem}
+  .btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+  .btn-copy{background:var(--bg-input);border:1px solid var(--border);color:var(--accent);padding:.5rem 1rem;font-size:.8rem;font-family:var(--font-mono)}
+  .btn-copy:hover{background:var(--accent);color:#000;border-color:var(--accent)}
+  .btn-copy.copied{background:var(--accent);color:#000;border-color:var(--accent)}
+  .btn-sm{padding:.35rem .75rem;font-size:.75rem}
+  .btn-danger{background:transparent;border:1px solid var(--red);color:var(--red)}
+  .btn-danger:hover{background:var(--red);color:#fff}
+  .btn-approve{background:var(--accent-glow);border:1px solid var(--accent);color:var(--accent)}
+  .btn-approve:hover{background:var(--accent);color:#000}
+
+  /* ── File Upload ── */
+  .dropzone{border:2px dashed var(--border);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer;transition:all var(--transition);color:var(--text-muted);background:var(--bg-input)}
+  .dropzone:hover,.dropzone.active{border-color:var(--accent);color:var(--accent);background:var(--accent-glow)}
+  .dropzone .icon{font-size:1.5rem;display:block;margin-bottom:.4rem}
+  .dropzone .text{font-size:.8rem}
+
+  /* ── Tabs ── */
+  .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.2rem}
+  .tab-btn{padding:.6rem 1.2rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--text-muted);cursor:pointer;font-family:var(--font-body);font-size:.85rem;font-weight:500;transition:all var(--transition)}
+  .tab-btn:hover{color:var(--text-secondary)}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  /* ── Article Preview ── */
+  .article-preview{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2rem;max-height:65vh;overflow-y:auto;font-family:var(--font-body);font-size:.92rem;line-height:1.8;color:#d4dce6}
+  .article-preview h1{font-family:var(--font-display);font-size:1.6rem;color:#fff;margin-bottom:1rem}
+  .article-preview h2{font-size:1.2rem;color:#e0e8f0;margin:1.8rem 0 .6rem}
+  .article-preview h3{font-size:1rem;color:#c8d6e5;margin:1.2rem 0 .4rem}
+  .article-preview p{margin-bottom:.8rem}
+  .article-preview table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.85rem}
+  .article-preview th{background:var(--bg-card);color:var(--accent);padding:.5rem .7rem;text-align:left;border:1px solid var(--border);font-weight:600}
+  .article-preview td{padding:.5rem .7rem;border:1px solid var(--border)}
+  .article-preview code{font-family:var(--font-mono);font-size:.8rem;background:var(--bg-card);padding:.15rem .35rem;border-radius:3px}
+  .article-preview pre{background:var(--bg-card);padding:1rem;border-radius:var(--radius-sm);overflow-x:auto;border:1px solid var(--border);margin:1rem 0}
+
+  /* ── Scorecard ── */
+  .score-overview{display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1.5rem}
+  .score-ring{position:relative;width:100px;height:100px}
+  .score-ring svg{transform:rotate(-90deg)}
+  .score-ring .bg{fill:none;stroke:var(--border);stroke-width:6}
+  .score-ring .fg{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+  .score-ring .score-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .score-ring .score-num{font-family:var(--font-display);font-size:2rem;line-height:1}
+  .score-ring .score-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+  .pass-badge{display:inline-block;padding:.3rem .75rem;border-radius:20px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .pass-badge.pass{background:var(--accent-glow);color:var(--accent)}
+  .pass-badge.fail{background:var(--red-glow);color:var(--red)}
+  .dimension-list{display:grid;gap:.6rem}
+  .dim-row{display:flex;align-items:center;gap:.8rem;padding:.65rem .9rem;background:var(--bg-deep);border-radius:var(--radius-sm);border:1px solid transparent;transition:border-color var(--transition)}
+  .dim-row:hover{border-color:var(--border)}
+  .dim-name{width:160px;font-size:.8rem;font-weight:500;color:var(--text-secondary);flex-shrink:0}
+  .dim-bar-wrap{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+  .dim-bar{height:100%;border-radius:4px;transition:width 1.2s cubic-bezier(0.4,0,0.2,1)}
+  .dim-score{width:36px;text-align:right;font-family:var(--font-mono);font-size:.85rem;font-weight:600;flex-shrink:0}
+  .dim-status{width:24px;text-align:center;font-size:.75rem;flex-shrink:0}
+
+  /* ── History ── */
+  .history-item{padding:.5rem .6rem;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;transition:background var(--transition)}
+  .history-item:hover{background:var(--bg-deep)}
+  .history-detail{display:none;padding:.5rem .6rem;font-size:.75rem;color:var(--text-muted);border-bottom:1px solid var(--border);background:var(--bg-deep)}
+  .history-detail.open{display:block}
+  .timeline{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:.5rem}
+  .timeline-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;font-family:var(--font-mono);border:2px solid var(--border);background:var(--bg-card);color:var(--text-muted)}
+  .timeline-dot.final{border-color:var(--accent);background:var(--accent-glow);color:var(--accent)}
+
+  /* ── Stats ── */
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin-bottom:1.5rem}
+  .stat-card{background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;text-align:center}
+  .stat-num{font-family:var(--font-display);font-size:1.8rem;color:var(--accent)}
+  .stat-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em}
+  .bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:.5rem 0}
+
+  /* ── Batch ── */
+  .batch-item{display:flex;align-items:center;gap:.5rem;padding:.35rem .5rem;font-size:.75rem;border-bottom:1px solid var(--border)}
+  .batch-item .kw{flex:1;color:var(--text-primary)}
+  .batch-item .st{font-family:var(--font-mono);font-size:.7rem}
+
+  /* ── Knowledge Editor ── */
+  .kw-table{width:100%;border-collapse:collapse;font-size:.8rem}
+  .kw-table th{background:var(--bg-deep);color:var(--accent);padding:.35rem .5rem;text-align:left;border:1px solid var(--border);font-size:.7rem;text-transform:uppercase}
+  .kw-table td{padding:.25rem .5rem;border:1px solid var(--border)}
+  .kw-table input{width:100%;padding:.25rem .4rem;font-size:.75rem;background:var(--bg-input);border:1px solid var(--border);border-radius:3px;color:var(--text-primary)}
+  .kw-table input:focus{border-color:var(--accent)}
+  .admin-toggle{font-size:.7rem;color:var(--text-muted);cursor:pointer;text-decoration:underline;display:inline-block;margin-top:.5rem}
+  .section-divider{border-top:1px solid var(--border);margin:1.2rem 0;padding-top:.8rem}
+
+  /* ── Toast ── */
+  .toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:#000;padding:.7rem 1.4rem;border-radius:var(--radius-sm);font-weight:600;font-size:.85rem;opacity:0;transform:translateY(10px);transition:all .25s;pointer-events:none;z-index:100}
+  .toast.show{opacity:1;transform:translateY(0)}
+
+  /* ── Empty State ── */
+  .empty-state{text-align:center;padding:3rem 2rem;color:var(--text-muted)}
+  .empty-state .icon{font-size:2.5rem;margin-bottom:.8rem;opacity:.5}
+  .empty-state p{font-size:.85rem}
+
+  /* ── Responsive ── */
+  @media(max-width:900px){.grid{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ── Status Bar ── -->
+<div id="status-bar">
+  <div class="pulse"></div>
+  <span class="stage" id="status_stage"></span>
+  <span class="detail" id="status_detail"></span>
+  <span class="elapsed" id="status_elapsed"></span>
+  <button class="btn btn-sm btn-secondary" onclick="cancelTask()" style="margin-left:auto">Cancel</button>
+</div>
+
+<div class="app">
+  <header>
+    <div class="logo">SEO <span>Content</span> Agent</div>
+    <div class="subtitle">B2B Article Generator &middot; Async Pipeline &middot; WordPress-Ready</div>
+  </header>
+
+  <div class="grid">
+    <!-- ═══════════ LEFT: Input Panel ═══════════ -->
+    <aside>
+      <!-- Single Generate -->
+      <div class="card">
+        <div class="card-header">Generator</div>
+        <label for="keyword">SEO Target Keyword <span style="color:var(--red)">*</span></label>
+        <input type="text" id="keyword" placeholder="e.g. custom marathon medals" value="custom marathon medals">
+        <label for="customer_type">Customer Type <span style="color:var(--red)">*</span></label>
+        <input type="text" id="customer_type" placeholder="e.g. corporate, sports club" value="corporate">
+        <label for="material">Product Material <span style="color:var(--red)">*</span></label>
+        <input type="text" id="material" placeholder="e.g. zinc alloy, iron, brass" value="zinc alloy">
+        <label for="notes">Supplementary Notes <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+        <textarea id="notes" rows="2" placeholder="e.g. 客户强调环保材质 / 重点展示3D浮雕工艺..."></textarea>
+        <label>Product Images <span style="color:var(--red)">*</span></label>
+        <div class="dropzone" id="dropzone">
+          <span class="icon">📁</span>
+          <span class="text">Drop product images here or click to browse (required, at least 1)</span>
+          <input type="file" id="image_input" multiple accept="image/*" style="display:none">
+        </div>
+        <div id="image_list" style="font-size:.75rem;color:var(--text-secondary);margin-top:.4rem"></div>
+        <button class="btn btn-primary" id="btn_generate" onclick="generate()">Generate Article</button>
+        <div style="text-align:center;margin-top:.6rem" id="status_area">
+          <span id="status_text" style="font-size:.8rem;color:var(--text-muted)"></span>
+        </div>
+      </div>
+
+      <!-- Batch Generate -->
+      <div class="card" style="margin-top:1rem">
+        <div class="card-header">Batch Generate</div>
+        <label>Keywords (one per line, rest of fields reused from form above)</label>
+        <textarea id="batch_keywords" rows="4" placeholder="custom marathon medals&#10;custom race medals&#10;custom corporate medals"></textarea>
+        <label style="margin-top:.6rem">Or import CSV <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem">(columns: keyword, customer_type, material, notes)</span></label>
+        <input type="file" id="batch_csv_input" accept=".csv,text/csv" style="font-size:.8rem;color:var(--text-secondary);margin-bottom:.4rem">
+        <div style="display:flex;gap:.5rem;margin-top:.4rem">
+          <button class="btn btn-primary" onclick="startBatch()" style="flex:1;margin-top:0">Start Batch</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('batch_csv_input').value='';showToast('CSV cleared')">Clear CSV</button>
+        </div>
+        <div id="batch_progress" style="margin-top:.5rem;font-size:.75rem;color:var(--text-muted)"></div>
+        <div id="batch_list" style="max-height:200px;overflow-y:auto;margin-top:.5rem"></div>
+      </div>
+
+      <!-- History -->
+      <div class="card" style="margin-top:1rem">
+        <div class="card-header">Recent</div>
+        <div id="history_list" style="font-size:.8rem">
+          <div class="empty-state" style="padding:1.5rem"><p style="font-size:.75rem">No generations yet</p></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════════ RIGHT: Output Panel ═══════════ -->
+    <main>
+      <div class="card">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="article">Article</button>
+          <button class="tab-btn" data-tab="report">Report</button>
+          <button class="tab-btn" data-tab="raw">WP HTML</button>
+          <button class="tab-btn" data-tab="stats">Stats</button>
+        </div>
+
+        <!-- Tab 1: Article -->
+        <div class="tab-panel active" id="panel-article">
+          <div style="display:flex;gap:.5rem;margin-bottom:1rem" id="article_actions" hidden>
+            <button class="btn btn-copy" onclick="copyArticle()">⏎ Copy to WordPress</button>
+            <button class="btn btn-secondary" onclick="downloadHTML()">⬇ Download</button>
+            <button class="btn btn-approve btn-sm" onclick="reviewAction('approve')" id="btn_approve" hidden>✓ Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="reviewAction('reject')" id="btn_reject" hidden>✗ Reject</button>
+            <button class="btn btn-sm btn-secondary" onclick="publishToWP()" id="btn_publish" hidden>Push to WP</button>
+            <button class="btn btn-sm btn-secondary" onclick="downloadMD()" id="btn_dl_md" hidden>&#x2B07; MD</button>
+            <button class="btn btn-sm btn-secondary" onclick="downloadJSON()" id="btn_dl_json" hidden>&#x2B07; JSON</button>
+            <button class="btn btn-sm btn-secondary" onclick="downloadPDF()" id="btn_dl_pdf" hidden>&#x2B07; PDF</button>
+          </div>
+          <div id="article_content">
+            <div class="empty-state"><div class="icon">📝</div><p>Article will appear here after generation</p></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Report -->
+        <div class="tab-panel" id="panel-report">
+          <div id="report_content">
+            <div class="empty-state"><div class="icon">📊</div><p>Scorecard and revision history will appear after generation</p></div>
+          </div>
+          <div id="geo_panel" hidden style="margin-top:1.2rem;padding:1rem;background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius)">
+            <div style="font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:.8rem">GEO Score - AI Engine Citability</div>
+            <div id="geo_content"></div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Raw WP HTML -->
+        <div class="tab-panel" id="panel-raw">
+          <div style="display:flex;gap:.5rem;margin-bottom:.8rem" id="raw_actions" hidden>
+            <button class="btn btn-copy" onclick="copyRawHTML()">⏎ Copy HTML</button>
+          </div>
+          <pre style="background:var(--bg-deep);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;max-height:60vh;overflow:auto;font-family:var(--font-mono);font-size:.75rem;color:var(--text-secondary)" id="raw_html"><span class="empty-state" style="padding:2rem;display:block">WordPress HTML source will appear here</span></pre>
+        </div>
+
+        <!-- Tab 4: Stats -->
+        <div class="tab-panel" id="panel-stats">
+          <canvas id="score_chart" height="120" style="display:none;margin-bottom:1.5rem"></canvas>
+          <div id="stats_content">
+            <div class="empty-state"><div class="icon">📈</div><p>Usage statistics will appear here</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin: Knowledge Base -->
+      <div class="card" style="margin-top:1rem" id="kb_card">
+        <div class="card-header">Knowledge Base <span style="font-weight:400;font-size:.75rem;color:var(--text-muted)">(admin)</span></div>
+        <div id="kb_content" style="font-size:.8rem">
+          <span class="admin-toggle" onclick="loadKnowledge()">Load knowledge base editor</span>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ──
+let currentArticleHTML = '';
+let currentScorecard = null;
+let currentDimensions = [];
+let currentRounds = [];
+let currentTotalScore = 0;
+let currentPass = false;
+let currentRunId = '';
+let activeTaskId = null;
+let pollingInterval = null;
+let statusInterval = null;
+let selectedFiles = [];
+
+// ── Tab switching ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'stats') loadStats();
+  });
+});
+
+// ── File Upload ──
+const dropzone = document.getElementById('dropzone');
+const imageInput = document.getElementById('image_input');
+const imageList = document.getElementById('image_list');
+dropzone.addEventListener('click', () => imageInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('active'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('active'));
+dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('active'); handleFiles(e.dataTransfer.files); });
+imageInput.addEventListener('change', () => handleFiles(imageInput.files));
+function handleFiles(files){ selectedFiles = Array.from(files); imageList.textContent = selectedFiles.map(f => f.name).join(', ') || ''; }
+
+// ── Toast ──
+function showToast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+
+// ── Status Bar ──
+function showStatus(stage, detail){
+  const bar = document.getElementById('status-bar');
+  bar.style.display = 'flex';
+  document.getElementById('status_stage').textContent = stage;
+  document.getElementById('status_detail').textContent = detail || '';
+  document.getElementById('status_elapsed').textContent = '0:00';
+  let start = Date.now();
+  if (statusInterval) clearInterval(statusInterval);
+  statusInterval = setInterval(() => {
+    const s = Math.floor((Date.now() - start) / 1000);
+    document.getElementById('status_elapsed').textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  }, 1000);
+}
+function hideStatus(){
+  document.getElementById('status-bar').style.display = 'none';
+  if (statusInterval){ clearInterval(statusInterval); statusInterval = null; }
+}
+
+// ── Cancel ──
+function cancelTask(){
+  if (activeTaskId){ activeTaskId = null; }
+  if (pollingInterval){ clearInterval(pollingInterval); pollingInterval = null; }
+  hideStatus();
+  document.getElementById('btn_generate').disabled = false;
+  document.getElementById('btn_generate').innerHTML = 'Generate Article';
+  document.getElementById('status_text').textContent = 'Cancelled.';
+}
+
+// ── Async Generate ──
+async function generate(){
+  const btn = document.getElementById('btn_generate');
+  const statusText = document.getElementById('status_text');
+  const keyword = document.getElementById('keyword').value.trim();
+  const customer_type = document.getElementById('customer_type').value.trim();
+  const material = document.getElementById('material').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+
+  if (!keyword){ showToast('Keyword is required.'); return; }
+  if (!customer_type){ showToast('Customer type is required.'); return; }
+  if (!material){ showToast('Material is required.'); return; }
+  if (selectedFiles.length === 0){ showToast('At least one product image is required.'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = 'Starting...';
+  statusText.textContent = 'Uploading images...';
+
+  const imageBase64List = await Promise.all(
+    selectedFiles.map(f => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(f);
+    }))
+  );
+  const validImages = imageBase64List.filter(b => b !== null);
+
+  try {
+    const resp = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({keyword, customer_type, material, notes, images: validImages}),
+    });
+    if (!resp.ok){ const e = await resp.json(); throw new Error(e.error || 'HTTP ' + resp.status); }
+    const data = await resp.json();
+    activeTaskId = data.task_id;
+    statusText.textContent = 'Task ' + activeTaskId + ' queued...';
+    btn.innerHTML = 'Running...';
+
+    // Poll for completion
+    showStatus('starting', 'Pipeline starting...');
+    pollTask(activeTaskId);
+  } catch(e){
+    statusText.textContent = 'Error: ' + e.message;
+    showToast('Failed: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = 'Generate Article';
+  }
+}
+
+function pollTask(taskId){
+  if (pollingInterval) clearInterval(pollingInterval);
+  pollingInterval = setInterval(async () => {
+    if (activeTaskId !== taskId){ clearInterval(pollingInterval); return; }
+    try {
+      const resp = await fetch('/api/task/' + taskId);
+      const t = await resp.json();
+      if (t.status === 'done'){
+        clearInterval(pollingInterval);
+        handleResult(t.response, t.task_id);
+        return;
+      }
+      if (t.status === 'failed'){
+        clearInterval(pollingInterval);
+        hideStatus();
+        document.getElementById('btn_generate').disabled = false;
+        document.getElementById('btn_generate').innerHTML = 'Generate Article';
+        document.getElementById('status_text').textContent = 'Failed: ' + (t.error || 'unknown');
+        showToast('Generation failed');
+        return;
+      }
+      // Update progress bar
+      const p = t.progress || {};
+      if (p.stage) showStatus(p.stage, p.detail || '');
+    } catch(e){ /* retry */ }
+  }, 1500);
+}
+
+function handleResult(data, taskId){
+  hideStatus();
+  currentArticleHTML = data.article_html || '';
+  currentScorecard = data.scorecard;
+  currentDimensions = data.dimensions || [];
+  currentTotalScore = data.total_score || 0;
+  currentPass = data.pass || false;
+  currentRounds = data.history || [];
+  currentRunId = taskId || '';
+
+  renderArticle(data);
+  renderReport(data);
+  renderGeoPanel(data.geo_score);
+  renderRawHTML(data);
+  document.getElementById('article_actions').hidden = false;
+  document.getElementById('raw_actions').hidden = false;
+  // Show review/publish buttons
+  document.getElementById('btn_approve').hidden = false;
+  document.getElementById('btn_reject').hidden = false;
+  document.getElementById('btn_publish').hidden = !currentPass;
+  document.getElementById('btn_dl_md').hidden = false;
+  document.getElementById('btn_dl_json').hidden = false;
+  document.getElementById('btn_dl_pdf').hidden = false;
+
+  const btn = document.getElementById('btn_generate');
+  btn.disabled = false;
+  btn.innerHTML = 'Generate Article';
+  document.getElementById('status_text').textContent = `Done — ${data.rounds || '?'} round(s), ${currentTotalScore}/70`;
+  showToast('Article generated!');
+  loadHistory();
+  activeTaskId = null;
+}
+
+// ── Render Article ──
+function renderArticle(data){
+  const html = (data.article_html || '').replace(/<!-- \/?wp:html -->/g, '');
+  document.getElementById('article_content').innerHTML = `<div class="article-preview">${html}</div>`;
+}
+
+// ── Render Report ──
+function renderReport(data){
+  const dims = data.dimensions || [];
+  const total = data.total_score || 0;
+  const passed = data.pass;
+  const dimColor = s => s >= 8 ? 'var(--accent)' : s >= 6 ? 'var(--amber)' : 'var(--red)';
+  let dimsHTML = dims.map(d => {
+    const sc = d.score || 0;
+    const color = dimColor(sc);
+    const suggestions = (d.fix_suggestions || []).map(s => `<div style="font-size:.75rem;color:var(--amber);padding-left:.9rem;margin-top:.2rem">↳ ${s}</div>`).join('');
+    return `<div class="dim-row"><div class="dim-name">${d.name||'?'}</div><div class="dim-bar-wrap"><div class="dim-bar" style="width:${sc*10}%;background:${color}"></div></div><div class="dim-score" style="color:${color}">${sc}/10</div><div class="dim-status" style="color:${sc>=6?'var(--accent)':'var(--red)'}">${sc>=6?'✓':'✗'}</div></div>${suggestions}`;
+  }).join('');
+
+  const circ = 2 * Math.PI * 42;
+  const offset = circ - (total / 70) * circ;
+  const rounds = data.history || [];
+  const dotsHTML = rounds.map((r,i) => `<div class="timeline-dot ${i===rounds.length-1?'final':''}" title="Round ${r.round}: ${r.score}/70">${r.score}</div>`).join('');
+
+  document.getElementById('report_content').innerHTML = `
+    <div class="score-overview">
+      <div class="score-ring"><svg width="100" height="100" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" cx="50" cy="50" r="42" stroke="${passed?'var(--accent)':'var(--amber)'}" stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/></svg><div class="score-text"><div class="score-num" style="color:${passed?'var(--accent)':'var(--amber)'}">${total}</div><div class="score-label">/70</div></div></div>
+      <div><span class="pass-badge ${passed?'pass':'fail'}">${passed?'PASSED':'NOT PASSED'}</span><div style="margin-top:.5rem;color:var(--text-secondary);font-size:.85rem">${rounds.length} revision round${rounds.length!==1?'s':''}</div><div class="timeline">${dotsHTML}</div></div>
+    </div>
+    <div class="dimension-list">${dimsHTML}</div>`;
+}
+
+// ── Render Raw HTML ──
+function renderRawHTML(data){ document.getElementById('raw_html').textContent = data.article_html || ''; }
+
+// ── Copy ──
+function copyArticle(){ navigator.clipboard.writeText(currentArticleHTML).then(() => showToast('Copied! Paste directly into WordPress.')); }
+function copyRawHTML(){ navigator.clipboard.writeText(document.getElementById('raw_html').textContent).then(() => showToast('HTML copied!')); }
+function downloadHTML(){ const blob = new Blob([currentArticleHTML],{type:'text/html'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `seo-article-${Date.now()}.html`; a.click(); }
+function downloadMD(){
+  if (!currentRunId) return;
+  const a = document.createElement('a');
+  a.href = `/api/article/${currentRunId}/download/md`;
+  a.download = '';
+  a.click();
+}
+function downloadJSON(){
+  if (!currentRunId) return;
+  const a = document.createElement('a');
+  a.href = `/api/article/${currentRunId}/download/json`;
+  a.download = '';
+  a.click();
+}
+function downloadPDF(){
+  if (!currentRunId) return;
+  const a = document.createElement('a');
+  a.href = `/api/article/${currentRunId}/download/pdf`;
+  a.download = '';
+  a.click();
+}
+
+// ── Review Actions ──
+async function reviewAction(action){
+  if (!currentRunId) return;
+  const reason = action === 'reject' ? prompt('Rejection reason:') : '';
+  try {
+    const resp = await fetch('/api/article/' + currentRunId + '/review', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({action, reason}),
+    });
+    const r = await resp.json();
+    showToast(action === 'approve' ? 'Article approved!' : 'Article rejected.');
+    if (action === 'approve') document.getElementById('btn_publish').hidden = false;
+  } catch(e){ showToast('Review action failed'); }
+}
+
+async function publishToWP(){
+  if (!currentRunId) return;
+  try {
+    const resp = await fetch('/api/article/' + currentRunId + '/publish', {method:'POST'});
+    const r = await resp.json();
+    if (r.wp_post_url) showToast('Pushed to WP draft: ' + r.wp_post_url);
+    else showToast('WP push failed: ' + (r.error || 'unknown'));
+  } catch(e){ showToast('WP push failed'); }
+}
+
+// ── History ──
+async function loadHistory(){
+  try {
+    const resp = await fetch('/api/outputs');
+    const items = await resp.json();
+    const list = document.getElementById('history_list');
+    if (!items.length){ list.innerHTML = '<div class="empty-state" style="padding:1.5rem"><p style="font-size:.75rem">No generations yet</p></div>'; return; }
+    list.innerHTML = items.slice(0, 10).map((item,i) => `
+      <div class="history-item" onclick="toggleHistory(this)" data-id="${item.task_id||i}">
+        <span style="color:var(--text-primary)">${item.keyword||'?'}</span>
+        <span style="font-family:var(--font-mono);font-size:.75rem;color:${item.pass?'var(--accent)':'var(--amber)'}">${item.total_score||0}/70 <span style="font-size:.65rem;margin-left:.3rem">${item.rounds||1}r</span></span>
+      </div>
+      <div class="history-detail">
+        <span style="color:var(--text-muted)">Output:</span> ${item.output_path||'N/A'}<br>
+        <span style="color:var(--text-muted)">Date:</span> ${item.generated_at||'?'}
+      </div>
+    `).join('');
+  } catch(e){}
+}
+function toggleHistory(el){
+  const detail = el.nextElementSibling;
+  if (detail && detail.classList.contains('history-detail')){
+    detail.classList.toggle('open');
+  }
+}
+
+// ── Stats ──
+function renderGeoPanel(geo){
+  const panel = document.getElementById('geo_panel');
+  const content = document.getElementById('geo_content');
+  if (!geo || !geo.total_paragraphs){ panel.hidden = true; return; }
+  panel.hidden = false;
+  const escapeAttr = v => String(v || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const avgPct = Math.round(geo.avg_score * 100);
+  const c = avgPct >= 70 ? 'var(--accent)' : avgPct >= 50 ? 'var(--amber)' : 'var(--red)';
+  content.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:.8rem">
+      <div style="text-align:center">
+        <div style="font-size:1.6rem;font-weight:700;color:${c}">${avgPct}%</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">Avg Citability</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:1.6rem;font-weight:700;color:var(--accent)">${geo.optimal_pct}%</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">Optimal Paragraphs</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:1.6rem;font-weight:700;color:var(--text-secondary)">${geo.total_paragraphs}</div>
+        <div style="font-size:.75rem;color:var(--text-muted)">Total Paragraphs</div>
+      </div>
+    </div>
+    <div style="font-size:.75rem;color:var(--text-muted);margin-bottom:.4rem">Optimal window: 134-167 words per paragraph (AI citation research)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.3rem">
+      ${(geo.passages||[]).slice(0,12).map(p => {
+        const pc = p.zone==='optimal'?'var(--accent)':p.zone==='good'?'var(--blue)':p.zone==='fair'?'var(--amber)':'var(--red)';
+        return `<span title="${escapeAttr(p.preview)}" style="font-size:.7rem;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,0.04);border:1px solid ${pc};color:${pc}">${p.word_count}w</span>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+async function loadStats(){
+  try {
+    const resp = await fetch('/api/stats');
+    const data = await resp.json();
+    const monthly = data.monthly || {};
+    let html = '';
+    for (const [ym, m] of Object.entries(monthly).sort().reverse()){
+      html += `
+        <div style="margin-bottom:1.5rem">
+          <h3 style="font-size:1rem;color:var(--text-primary);margin-bottom:.8rem">${ym}</h3>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="stat-num">${m.total_articles}</div><div class="stat-label">Articles</div></div>
+            <div class="stat-card"><div class="stat-num">${m.pass_rate}%</div><div class="stat-label">Pass Rate</div></div>
+            <div class="stat-card"><div class="stat-num">${m.avg_rounds}</div><div class="stat-label">Avg Rounds</div></div>
+            <div class="stat-card"><div class="stat-num">$${m.estimated_cost_usd}</div><div class="stat-label">Est. Cost</div></div>
+            <div class="stat-card"><div class="stat-num">${(m.total_tokens/1000).toFixed(0)}K</div><div class="stat-label">Total Tokens</div></div>
+            <div class="stat-card"><div class="stat-num">${Math.round(m.avg_duration_sec)}s</div><div class="stat-label">Avg Duration</div></div>
+          </div>
+        </div>`;
+    }
+    if (!html) html = '<div class="empty-state"><p>No data yet. Run some articles first.</p></div>';
+    document.getElementById('stats_content').innerHTML = html;
+
+    const allArticles = [];
+    for (const m of Object.values(monthly)){
+      if (m.articles) allArticles.push(...m.articles);
+    }
+    allArticles.sort((a, b) => (a.date||'').localeCompare(b.date||''));
+    const canvas = document.getElementById('score_chart');
+    if (allArticles.length >= 2 && typeof Chart !== 'undefined'){
+      canvas.style.display = 'block';
+      if (window._scoreChart) window._scoreChart.destroy();
+      window._scoreChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+          labels: allArticles.map(a => (a.date||'').slice(0,10)),
+          datasets: [{
+            label: 'Quality Score',
+            data: allArticles.map(a => a.score),
+            borderColor: '#00c897',
+            backgroundColor: 'rgba(0,200,151,0.08)',
+            borderWidth: 2,
+            pointRadius: 3,
+            tension: 0.3,
+            fill: true,
+          }]
+        },
+        options: {
+          scales: {
+            y: { min: 0, max: 70, grid:{color:'#1e2a3a'}, ticks:{color:'#546a82'} },
+            x: { grid:{color:'#1e2a3a'}, ticks:{color:'#546a82', maxTicksLimit:8} }
+          },
+          plugins: { legend: { labels: { color:'#8899b4' } } },
+        }
+      });
+    } else {
+      canvas.style.display = 'none';
+    }
+  } catch(e){}
+}
+
+// ── Batch ──
+async function startBatch(){
+  const csvFile = document.getElementById('batch_csv_input').files[0];
+  let csvItems = null;
+  if (csvFile){
+    const parseCSVRow = row => {
+      const cols = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < row.length; i++){
+        const ch = row[i];
+        const next = row[i + 1];
+        if (ch === '"' && inQuotes && next === '"'){ cur += '"'; i++; continue; }
+        if (ch === '"'){ inQuotes = !inQuotes; continue; }
+        if (ch === ',' && !inQuotes){ cols.push(cur.trim()); cur = ''; continue; }
+        cur += ch;
+      }
+      cols.push(cur.trim());
+      return cols;
+    };
+    const text = await csvFile.text();
+    const rows = text.split(/\r?\n/).map(r => r.trim()).filter(r => r);
+    const dataRows = rows.filter((row, i) => {
+      const firstCol = parseCSVRow(row)[0] || '';
+      return !(i === 0 && firstCol.toLowerCase() === 'keyword');
+    });
+    csvItems = dataRows.map(row => {
+      const cols = parseCSVRow(row);
+      return {keyword: cols[0]||'', customer_type: cols[1]||'', material: cols[2]||'', notes: cols[3]||''};
+    }).filter(i => i.keyword);
+  }
+  const keywords = document.getElementById('batch_keywords').value.trim().split('\n').filter(k => k.trim());
+  if (!(csvItems && csvItems.length) && !keywords.length){ showToast('Enter at least one keyword or import CSV'); return; }
+  const customer_type = document.getElementById('customer_type').value.trim();
+  const material = document.getElementById('material').value.trim();
+  const notes = document.getElementById('notes').value.trim();
+  const needsFormDefaults = !(csvItems && csvItems.length) || csvItems.some(i => !i.customer_type || !i.material);
+  if (needsFormDefaults && (!customer_type || !material)){ showToast('Customer type and material are required'); return; }
+  if (!selectedFiles.length){ showToast('Product images are required'); return; }
+
+  const imageBase64List = await Promise.all(
+    selectedFiles.map(f => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(f);
+    }))
+  );
+  const validImages = imageBase64List.filter(b => b !== null);
+
+  let items;
+  if (csvItems && csvItems.length > 0){
+    items = csvItems.map(row => ({
+      keyword: row.keyword,
+      customer_type: row.customer_type || customer_type,
+      material: row.material || material,
+      notes: row.notes || notes,
+      images: validImages,
+    }));
+  } else {
+    items = keywords.map(kw => ({keyword: kw.trim(), customer_type, material, notes, images: validImages}));
+  }
+
+  try {
+    const resp = await fetch('/api/batch', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({items}),
+    });
+    const data = await resp.json();
+    showToast(`Batch ${data.batch_id} started with ${data.task_count} tasks`);
+    pollBatch(data.batch_id);
+  } catch(e){ showToast('Batch creation failed'); }
+}
+
+function pollBatch(batchId){
+  const interval = setInterval(async () => {
+    try {
+      const resp = await fetch('/api/batch/' + batchId);
+      const b = await resp.json();
+      document.getElementById('batch_progress').textContent = `${b.progress} completed — Status: ${b.status}`;
+      const list = document.getElementById('batch_list');
+      list.innerHTML = (b.tasks||[]).map(t => `
+        <div class="batch-item">
+          <span class="kw">${t.keyword||'?'}</span>
+          <span class="st" style="color:${t.status==='done'?'var(--accent)':t.status==='failed'?'var(--red)':'var(--amber)'}">${t.status}</span>
+        </div>
+      `).join('');
+      if (b.status === 'done'){ clearInterval(interval); showToast('Batch complete!'); loadHistory(); }
+    } catch(e){ clearInterval(interval); }
+  }, 3000);
+}
+
+// ── Knowledge Base ──
+async function loadKnowledge(){
+  try {
+    const resp = await fetch('/api/knowledge/categories');
+    const data = await resp.json();
+    const cats = data.categories || {};
+    const materials = data.materials || {};
+    const processes = data.processes || {};
+
+    let html = '<div><strong>Categories</strong></div><div style="display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0">';
+    for (const [name, info] of Object.entries(cats)){
+      html += `<button class="btn btn-sm btn-secondary" onclick="editCategory('${name}')">${name} (${info.keyword_count} kw)</button>`;
+    }
+    html += '</div>';
+    html += '<div style="margin-top:.8rem"><strong>Materials:</strong> ' + Object.keys(materials).join(', ') + '</div>';
+    html += '<div style="margin-top:.4rem"><strong>Processes:</strong> ' + Object.keys(processes).join(', ') + '</div>';
+    html += '<div id="cat_editor" style="margin-top:1rem"></div>';
+    document.getElementById('kb_content').innerHTML = html;
+  } catch(e){ showToast('Failed to load knowledge base'); }
+}
+
+async function editCategory(name){
+  try {
+    const resp = await fetch('/api/knowledge/category/' + name);
+    const cat = await resp.json();
+    const mainKws = cat.main_keywords || [];
+    let rows = mainKws.map((kw,i) => `
+      <tr>
+        <td><input value="${kw.keyword}" data-idx="${i}" data-field="keyword"></td>
+        <td><input value="${kw.volume}" data-idx="${i}" data-field="volume" style="width:80px" type="number"></td>
+        <td><input value="${kw.kd}" data-idx="${i}" data-field="kd" style="width:60px" type="number"></td>
+        <td><button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">×</button></td>
+      </tr>`).join('');
+    document.getElementById('cat_editor').innerHTML = `
+      <h4 style="font-size:.85rem;margin-bottom:.5rem">${name}</h4>
+      <table class="kw-table"><thead><tr><th>Keyword</th><th>Volume</th><th>KD</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+      <button class="btn btn-sm btn-secondary" style="margin-top:.5rem" onclick="addKeywordRow()">+ Add</button>
+      <button class="btn btn-sm btn-primary" style="margin-top:.5rem;margin-left:.5rem" onclick="saveCategory('${name}')">Save</button>`;
+    window._editingCategory = name;
+    window._catData = cat;
+  } catch(e){ showToast('Failed to load category'); }
+}
+
+function addKeywordRow(){
+  const tbody = document.querySelector('#cat_editor .kw-table tbody');
+  if (!tbody) return;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input value="" data-field="keyword"></td><td><input value="0" data-field="volume" style="width:80px" type="number"></td><td><input value="0" data-field="kd" style="width:60px" type="number"></td><td><button class="btn btn-sm btn-danger" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+async function saveCategory(name){
+  const rows = document.querySelectorAll('#cat_editor .kw-table tbody tr');
+  const main_keywords = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    if (inputs.length >= 3 && inputs[0].value.trim()){
+      main_keywords.push({
+        keyword: inputs[0].value.trim(),
+        volume: parseInt(inputs[1].value) || 0,
+        kd: parseInt(inputs[2].value) || 0,
+      });
+    }
+  });
+  const data = {...(window._catData || {}), main_keywords};
+  try {
+    await fetch('/api/knowledge/category/' + name, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data),
+    });
+    showToast('Category saved!');
+    loadKnowledge();
+  } catch(e){ showToast('Save failed'); }
+}
+
+// ── Init ──
+loadHistory();
+</script>
+</body>
+</html>

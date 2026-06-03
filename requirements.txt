@@ -1,3 +1,12 @@
-crewai[tools]>=0.100.0
-python-dotenv>=1.0.0
-pydantic>=2.0.0
+crewai[tools]>=0.100.0,<1.0.0
+python-dotenv>=1.0.0,<2.0.0
+pydantic>=2.0.0,<3.0.0
+flask>=3.0.0,<4.0.0
+markdown>=3.5.0,<4.0.0
+openai>=1.30.0,<2.0.0
+Pillow>=10.0.0,<12.0.0
+requests>=2.31.0,<3.0.0
+
+# Optional: PDF export via GET /api/article/<id>/download/pdf
+# Requires GTK3 on Windows (via MSYS2). Install manually if needed:
+#   pip install "weasyprint>=60.0,<63.0"
