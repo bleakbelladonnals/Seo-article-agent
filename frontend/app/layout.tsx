@@ -22,13 +22,13 @@ export const metadata: Metadata = {
     title: 'LumaFlow AI — Lighting Hardware Content Operations Hub',
     description: 'Product knowledge, five-agent workflow orchestration, factual/SEO/GEO/brand review, human approval and versioned assets.',
     type: 'website',
-    images: [{ url: '/lumaflow-hardware-hero-v2.png', width: 1672, height: 941, alt: 'LumaFlow AI Lighting Hardware Content Operations Hub' }],
+    images: [{ url: '/og.png', width: 1672, height: 941, alt: 'LumaFlow AI Lighting Hardware Content Operations Hub' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'LumaFlow AI — Lighting Hardware Content Operations Hub',
     description: 'A governed AI content workflow for export-oriented lighting-hardware OEM teams.',
-    images: ['/lumaflow-hardware-hero-v2.png'],
+    images: ['/og.png'],
   },
 };
 
