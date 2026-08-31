@@ -7,38 +7,32 @@ on:
     branches: [main, master]
 
 jobs:
-  test:
+  frontend:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.11", "3.12"]
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-node@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          node-version: 22.13.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run lint
+        working-directory: frontend
+      - run: npm run typecheck
+        working-directory: frontend
+      - run: npm run test
+        working-directory: frontend
+      - run: npm run build
+        working-directory: frontend
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run unit tests
-        env:
-          DEEPSEEK_API_KEY: test-key
-          VISION_MODEL_NAME: mock-vision
-          VISION_API_KEY: mock-key
-          VISION_BASE_URL: https://mock.api/v1
-          API_TOKEN: test-token-ci
-          MODEL_NAME: deepseek-chat
-        run: |
-          python tests/test_utils.py
-          python tests/test_server.py
-
-      - name: Check imports
-        env:
-          DEEPSEEK_API_KEY: test-key
-          VISION_MODEL_NAME: mock-vision
-          VISION_API_KEY: mock-key
-        run: python -c "import config; import crew; print('imports OK')"
+  fixture-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify offline five-agent contracts
+        run: python -m unittest discover prototype/lumaflow-crew/tests -v

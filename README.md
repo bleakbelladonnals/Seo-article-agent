@@ -1,191 +1,85 @@
-# SEO Crew Agent
+# LumaFlow AI Content Operations Hub
 
-A multi-agent pipeline for generating B2B foreign-trade SEO articles. Upload product images, provide a target keyword, and the system handles everything: image analysis → keyword research → content planning → article writing → quality review, with automatic revision loops until the article passes the quality gate.
+LumaFlow is an interview-ready, frontend-first product demo for overseas B2B lighting-hardware content teams. Its fixed case follows the fictional **Aurelia PHK-01 antique-brass pendant-light hardware kit** from product knowledge to an approved, versioned content asset.
 
-Built with [CrewAI](https://github.com/joaomdmoura/crewAI) and DeepSeek. Outputs Markdown articles with JSON-LD structured data, image SEO metadata, and WordPress-ready HTML.
+**Live demo:** https://lumaflow-ai-content-ops.holy-rabbit.chatgpt.site
 
-## How It Works
+## What the demo proves
 
-```
-Product images → Vision model (image analysis, alt texts)
-    ↓
-[Researcher]  keyword matrix, product facts
-    ↓
-[Planner]     SEO content brief, H2 structure
-    ↓
-[Writer]      full Markdown article + JSON-LD + /llms.txt
-    ↓
-[Reviewer]    7-dimension scoring (max 70 pts)
-    ↓
-Pass? → save output
-Fail? → revision loop (up to 5 rounds, with convergence detection)
+```text
+product master + BOM + finish evidence
+  → five deterministic specialist agents
+  → fact / SEO / GEO / brand review
+  → targeted revision + human approval gate
+  → V2 asset lineage + Markdown / HTML / JSON export
 ```
 
-**Quality gate:** total score ≥ 48, every dimension ≥ 6, EEAT trust ≥ 5.
+The 5–7 minute path is deliberately narrow and repeatable:
 
-## Quick Start
+1. Inspect PHK-01's BOM, AB-07 finish route, source versions, and non-electrical scope.
+2. Run a simulated five-agent workflow and inspect each task's input evidence, output schema, Prompt version, and model route.
+3. Correct two critical errors: plated steel described as solid brass, and a non-electrical kit described as a complete pendant light.
+4. Accept two GEO recommendations and observe the **LumaFlow internal rubric** move from 76 to 86.
+5. Approve the article, create V2, refresh to confirm local persistence, and export Markdown, HTML, or JSON.
 
-### 1. Install dependencies
+## Product modules
+
+- **Workbench** — active task, approval risks, anonymized retrospective metrics, model evaluation, and three UAT rounds.
+- **Product Knowledge** — product master, BOM tree, manufacturing route, finish swatches, sources, and included/excluded scope.
+- **Content Studio** — controlled brief, five simulated Agents, evidence inputs, structured schemas, versioned Prompts, routing, progress, and retry.
+- **Review Center** — fact, SEO, GEO, and brand findings with targeted patches and a critical-issue approval gate.
+- **Asset Library** — V1/V2 history, knowledge and Prompt lineage, human decisions, visual assets, and three export formats.
+
+## Evidence and disclosure
+
+Every company, product, source filename, image, sample, and workflow result is fictional or anonymized. The app separates two kinds of evidence:
+
+- **Current demo state:** deterministic browser data used to make the interaction repeatable.
+- **Anonymized retrospective snapshots:** explicitly labeled historical samples with formulas and denominators, including 150→30 minutes, 72→126 monthly pieces, 64%→85% first-pass approval, and three UAT rounds.
+
+The app does not contain a live LLM, RAG service, vector database, relational database, task queue, authentication system, CMS, WordPress integration, or production telemetry. It never presents simulated Agents, citations, scores, or metrics as live production output. GEO Score is a LumaFlow internal evaluation rubric, not an industry or platform standard.
+
+## Run locally
+
+Node.js 22.13+ is required.
 
 ```bash
-pip install -r requirements.txt
+cd frontend
+npm ci
+npm run dev
 ```
 
-### 2. Configure environment
+Open `http://localhost:3000`. No API key or external service is required. Use **Reset demo** at any time to clear browser-local V4 state.
+
+## Quality gates
 
 ```bash
-cp .env.example .env
+npm --prefix frontend run lint
+npm --prefix frontend run typecheck
+npm --prefix frontend run test
+npm --prefix frontend run test:e2e
+npm --prefix frontend run build
+python3 -m unittest discover prototype/lumaflow-crew/tests -v
 ```
 
-Edit `.env` and fill in the required values:
+## Repository map
 
-| Variable | Required | Description |
-|---|---|---|
-| `DEEPSEEK_API_KEY` | Yes | DeepSeek text-generation API key |
-| `VISION_MODEL_NAME` | Yes | Vision model (e.g. `gpt-4o-mini`) |
-| `VISION_API_KEY` | Yes | Vision model API key |
-| `API_TOKEN` | Recommended | Bearer token for write endpoints |
-| `DEEPSEEK_BASE_URL` | No | Defaults to `https://api.deepseek.com/v1` |
-| `VISION_BASE_URL` | No | Vision model API base URL |
-| `WP_SITE_URL` | No | WordPress site URL (for publish feature) |
-| `WP_USERNAME` | No | WordPress username |
-| `WP_APP_PASSWORD` | No | WordPress application password |
-
-Generate a secure API token:
-
-```bash
-python -c "import secrets; print(secrets.token_hex(32))"
+```text
+frontend/                       React + Vinext deterministic portfolio app
+prototype/lumaflow-crew/        offline five-agent fixture reference
+legacy/medal-seo-prototype/     archived original Python/CrewAI project
+docs/portfolio/                 product, data, interaction, QA, demo, and architecture docs
 ```
 
-### 3. Start the web UI
+The typed frontend service surface preserves the future `/api/v2` contract, but the published app always selects the mock adapter. The Python reference demonstrates task sequencing, structured outputs, bounded retry, and human gating while explicitly prohibiting network access.
 
-```bash
-python server.py
-# Open http://127.0.0.1:5000
-```
+## Portfolio documentation
 
-### 4. Or run from CLI
-
-```bash
-python main.py \
-  --keyword "custom marathon medals" \
-  --customer-type "corporate" \
-  --material "zinc alloy" \
-  --images product1.jpg product2.jpg \
-  --notes "Client emphasizes eco-friendly materials"
-```
-
-## API
-
-All write endpoints require `Authorization: Bearer <API_TOKEN>` when `API_TOKEN` is set.
-
-```bash
-# Start a generation job
-curl -X POST http://localhost:5000/api/generate \
-  -H "Authorization: Bearer <API_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{"keyword": "custom medals", "customer_type": "corporate",
-       "material": "zinc alloy", "images": ["<base64 data URL>"]}'
-
-# Poll for result
-curl http://localhost:5000/api/task/<task_id>
-
-# Batch generation
-curl -X POST http://localhost:5000/api/batch \
-  -H "Authorization: Bearer <API_TOKEN>" \
-  -H "Content-Type: application/json" \
-  -d '{"items": [{"keyword": "...", "customer_type": "...", "material": "...", "images": [...]}]}'
-```
-
-See [API endpoint table](#api-endpoints) below for the full list.
-
-## Production Deployment
-
-The built-in Flask server (`python server.py`) is for development only. Use [Gunicorn](https://gunicorn.org/) for production:
-
-```bash
-pip install gunicorn
-gunicorn -w 1 -b 0.0.0.0:5000 --timeout 600 server:app
-```
-
-> **Why `-w 1` (single worker)?** The task store is in-process memory. Multiple workers would each have their own isolated `tasks` dict, so polling `GET /api/task/<id>` from a different worker than the one that started the job would return "not found". A single worker avoids this; article generation is I/O-bound (waiting on LLM APIs) so a single process handles concurrent requests fine.
-
-For a robust setup behind nginx:
-
-```nginx
-location / {
-    proxy_pass http://127.0.0.1:5000;
-    proxy_read_timeout 660;
-    proxy_connect_timeout 10;
-}
-```
-
-## Project Structure
-
-```
-main.py              CLI entry point
-server.py            Flask API + single-page web UI
-crew.py              CrewAI orchestration, revision loop, image analysis
-agents.py            4 CrewAI agent definitions
-tasks.py             Task factory (make_tasks) — fresh instances per request
-config.py            Global config: models, thresholds, paths
-knowledge/
-  keywords.json      Keyword knowledge base (category/material/process data)
-static/
-  index.html         Single-page web UI (vanilla JS, no framework)
-tests/
-  test_utils.py      Unit tests for core utility functions
-  test_server.py     Integration tests for Flask API
-.github/workflows/
-  ci.yml             GitHub Actions CI (Python 3.11 + 3.12)
-output/              Generated articles and run logs (gitignored)
-```
-
-## Run Tests
-
-```bash
-python tests/test_utils.py
-python tests/test_server.py
-```
-
-Tests run without real API keys (CrewAI and LLM dependencies are mocked).
-
-## API Endpoints
-
-| Endpoint | Auth | Description |
-|---|---|---|
-| `POST /api/generate` | ✓ | Start async article generation, returns `task_id` |
-| `GET /api/task/<id>` | — | Poll status; when done includes full article + scorecard |
-| `GET /api/task/<id>/stream` | — | SSE progress stream |
-| `POST /api/batch` | ✓ | Batch generate — `items[]` array |
-| `GET /api/batch/<id>` | — | Batch status |
-| `GET /api/stats` | — | Monthly aggregates from run logs |
-| `GET /api/articles` | — | List generated articles |
-| `POST /api/article/<id>/review` | ✓ | Approve / reject article |
-| `POST /api/article/<id>/publish` | ✓ | Push to WordPress draft |
-| `GET /api/article/<id>/download/md` | — | Download Markdown |
-| `GET /api/article/<id>/download/json` | — | Download run log JSON |
-| `GET /api/knowledge/categories` | — | List keyword categories |
-| `PUT /api/knowledge/category/<name>` | ✓ | Update keyword data |
-
-## Quality Dimensions
-
-The Reviewer agent scores each article on 7 dimensions (1–10 each, max 70):
-
-| Dimension | What it checks |
-|---|---|
-| `search_intent_match` | Does the article answer the core question? |
-| `structure` | H2/H3 as planned, each H2 opens with core answer |
-| `eeat_trust` | Evidence-backed claims, no fabricated data, author block |
-| `so_what_test` | Every feature has a "which means…" benefit bridge |
-| `specificity` | No vague superlatives without quantification |
-| `ai_citability` | Structured data, cited statistics, /llms.txt block |
-| `clarity_readability` | No Chinglish, active voice, one idea per sentence |
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md).
-
-## License
-
-MIT
+- [Project definition](docs/portfolio/00-project-definition.md)
+- [Product specification](docs/portfolio/01-product-spec.md)
+- [Mock data specification](docs/portfolio/02-mock-data-spec.md)
+- [Interaction and state](docs/portfolio/03-interaction-spec.md)
+- [Acceptance checklist](docs/portfolio/04-acceptance-checklist.md)
+- [5–7 minute demo script](docs/portfolio/05-demo-script.md)
+- [Architecture and development handoff](docs/portfolio/06-development-handoff.md)
+- [Resume claim → product evidence map](docs/portfolio/08-resume-evidence-map.md)

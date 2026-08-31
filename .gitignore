@@ -15,6 +15,7 @@ crew.log
 
 # Internal development documents (not for public)
 docs/internal/
+00_项目设定总册.md
 
 # IDE / OS files
 .DS_Store
