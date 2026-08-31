@@ -17,18 +17,18 @@ const siteUrl = 'https://lumaflow-ai-content-ops.holy-rabbit.chatgpt.site';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'LumaFlow AI — Lighting Hardware Content Operations Hub',
-  description: 'A deterministic portfolio demo for governed AI content operations in export-oriented lighting-hardware OEM manufacturing.',
+  description: 'A governed AI content operations workspace for export-oriented lighting-hardware OEM teams.',
   openGraph: {
     title: 'LumaFlow AI — Lighting Hardware Content Operations Hub',
-    description: 'Product knowledge, five simulated agents, factual/SEO/GEO/brand review, human approval and versioned assets.',
+    description: 'Product knowledge, five-agent workflow orchestration, factual/SEO/GEO/brand review, human approval and versioned assets.',
     type: 'website',
-    images: [{ url: '/og.png', width: 1672, height: 941, alt: 'LumaFlow AI lighting hardware content operations demo' }],
+    images: [{ url: '/lumaflow-hardware-hero-v2.png', width: 1672, height: 941, alt: 'LumaFlow AI Lighting Hardware Content Operations Hub' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'LumaFlow AI — Lighting Hardware Content Operations Hub',
-    description: 'A governed AI content workflow demo for export-oriented lighting-hardware OEM teams.',
-    images: ['/og.png'],
+    description: 'A governed AI content workflow for export-oriented lighting-hardware OEM teams.',
+    images: ['/lumaflow-hardware-hero-v2.png'],
   },
 };
 

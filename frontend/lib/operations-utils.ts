@@ -1,4 +1,4 @@
-import type { EvidenceMetric, ModelEvaluation } from './content-ops-types';
+import type { ModelEvaluation, OperationsMetric } from './content-ops-types';
 
 export const MODEL_WEIGHTS = {
   fact: 0.30,
@@ -16,14 +16,13 @@ export function calculateWeightedModelScore(model: Pick<ModelEvaluation, 'dimens
     .toFixed(1));
 }
 
-export function verifyEvidenceMetric(metric: EvidenceMetric) {
+export function verifyOperationsMetric(metric: OperationsMetric) {
   switch (metric.id) {
     case 'draft-time': return (150 - 30) / 150;
     case 'capacity': return (126 - 72) / 72;
     case 'first-pass': return 0.85 - 0.64;
     case 'conflict': return 46 / 50;
     case 'traceability': return 191 / 200;
-    case 'uat': return 56 / 60;
     case 'review-time': return (40 - 20) / 40;
     case 'reuse': return 18 / 30;
     default: return null;

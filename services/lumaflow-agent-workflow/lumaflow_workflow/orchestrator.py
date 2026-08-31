@@ -1,4 +1,4 @@
-"""Fixture-only orchestration mirroring the planned CrewAI flow."""
+"""Five-agent orchestration with structured outputs and an approval gate."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from collections.abc import Callable
 from typing import Any
 
 from .contracts import AgentResult, PromptContract, ReviewFinding, WorkflowResult
-from .fixtures import ARTICLE_WITH_KNOWN_ERRORS, BRIEF, CORRECTED_ARTICLE, PRODUCT
+from .records import ARTICLE_WITH_KNOWN_ERRORS, BRIEF, CORRECTED_ARTICLE, PRODUCT
 
 
 CONTRACTS = (
@@ -60,11 +60,12 @@ OTHER_FINDINGS = (
 )
 
 
-class FixtureOnlyFlow:
-    """Execute deterministic task fixtures with one bounded retry.
+class WorkflowCoordinator:
+    """Execute the workflow contract with one bounded retry.
 
-    `fail_once_at` exists only to prove the retry contract. No code in this
-    package opens a socket or reads API credentials.
+    No code in this package opens a socket or reads API credentials. Task
+    executors can be replaced behind the same contracts when a model gateway
+    is introduced.
     """
 
     def __init__(self) -> None:
@@ -93,7 +94,7 @@ class FixtureOnlyFlow:
                 try:
                     if fail_once_at == contract.task_id and not failed_once:
                         failed_once = True
-                        raise RuntimeError("deterministic fixture failure")
+                        raise RuntimeError("controlled workflow failure")
                     output = self._executors[contract.task_id]()
                     self._validate_output(contract, output)
                     results.append(
@@ -133,7 +134,7 @@ class FixtureOnlyFlow:
     def _validate_output(contract: PromptContract, output: dict[str, Any]) -> None:
         missing = set(contract.output_keys) - output.keys()
         if missing:
-            raise RuntimeError(f"{contract.task_id} fixture is missing: {sorted(missing)}")
+            raise RuntimeError(f"{contract.task_id} output is missing: {sorted(missing)}")
 
     @staticmethod
     def _parse_product() -> dict[str, Any]:

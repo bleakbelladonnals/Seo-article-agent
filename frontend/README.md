@@ -1,17 +1,12 @@
 # LumaFlow frontend
 
-React 19 + Vinext implementation of the deterministic Aurelia PHK-01 portfolio demo.
+React 19 + Vinext implementation of the LumaFlow lighting-hardware content operations workspace.
+
+## Commands
 
 ```bash
 npm ci
 npm run dev
-```
-
-The application uses a typed mock `ContentOpsService`, reducer state machine, predictable Agent timing, and versioned browser storage under `lumaflow-demo-v4`. It has no backend or API-key requirement.
-
-The fixed flow is: product master/BOM/finish evidence → five simulated Agents → fact/SEO/GEO/brand review → two critical corrections → GEO 76→86 → human approval → persistent V2 → Markdown/HTML/JSON export.
-
-```bash
 npm run lint
 npm run typecheck
 npm run test
@@ -19,4 +14,10 @@ npm run test:e2e
 npm run build
 ```
 
-Images under `public/` are fictional generated demo assets. The app's GEO Score is a LumaFlow internal rubric, not an industry or search-platform standard.
+The application uses `LocalContentOpsService`, a reducer-backed state machine and versioned browser storage under `lumaflow-workspace-v5`. It requires no API key or external service.
+
+## Business flow
+
+PHK-01 product knowledge → five-agent workflow → fact/SEO/GEO/brand review → critical-finding gate → human approval → V2 asset → Markdown/HTML/JSON export.
+
+Workspace settings support validated JSON backup, v4 migration, v5 restore and confirmed clearing. GEO Score is a LumaFlow internal content-readiness rubric.

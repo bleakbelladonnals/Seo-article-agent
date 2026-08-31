@@ -1,0 +1,195 @@
+openapi: 3.1.0
+info:
+  title: LumaFlow Content Operations API
+  version: 2.1.0
+  description: Service adapter contract preserved by the local workspace.
+paths:
+  /api/v2/health:
+    get:
+      summary: Read workflow service health and capabilities
+      responses:
+        '200':
+          description: Service health
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceHealth'
+  /api/v2/content-runs:
+    post:
+      summary: Start a version-pinned five-agent content run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [brief]
+              properties:
+                brief: { $ref: '#/components/schemas/ContentBrief' }
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkflowRun' }
+  /api/v2/content-runs/{runId}:
+    get:
+      summary: Read task status, findings, scores and lineage
+      parameters:
+        - $ref: '#/components/parameters/RunId'
+      responses:
+        '200':
+          description: Current run
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkflowRun' }
+  /api/v2/content-runs/{runId}/events:
+    get:
+      summary: Subscribe to ordered workflow events
+      parameters:
+        - $ref: '#/components/parameters/RunId'
+      responses:
+        '200': { description: Server-sent event stream }
+  /api/v2/content-runs/{runId}/findings/{findingId}/decision:
+    post:
+      summary: Record an accepted, ignored or manual decision
+      parameters:
+        - $ref: '#/components/parameters/RunId'
+        - in: path
+          name: findingId
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: { enum: [accepted, ignored, manual] }
+                manualText: { type: string }
+      responses:
+        '200':
+          description: Decision stored
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkflowRun' }
+  /api/v2/content-runs/{runId}/approve:
+    post:
+      summary: Approve a run after all critical findings are resolved
+      parameters:
+        - $ref: '#/components/parameters/RunId'
+      responses:
+        '201':
+          description: V2 asset created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ContentAsset' }
+        '409': { description: Approval gate blocked }
+  /api/v2/assets/{assetId}/versions/{versionId}/export:
+    get:
+      summary: Export an immutable asset version
+      parameters:
+        - in: path
+          name: assetId
+          required: true
+          schema: { type: string }
+        - in: path
+          name: versionId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: format
+          required: true
+          schema: { enum: [markdown, html, json] }
+      responses:
+        '200': { description: Export file }
+components:
+  parameters:
+    RunId:
+      in: path
+      name: runId
+      required: true
+      schema: { type: string }
+  schemas:
+    ServiceHealth:
+      type: object
+      required: [ok, origin, message, capabilities]
+      properties:
+        ok: { type: boolean }
+        origin: { enum: [local, api] }
+        message: { type: string }
+        capabilities:
+          type: array
+          items: { type: string }
+    ContentBrief:
+      type: object
+      required: [productId, contentType, keyword, market, language, audience, deliverables]
+      properties:
+        productId: { type: string }
+        contentType: { const: sourcing-guide }
+        keyword: { type: string }
+        market: { enum: [global, north-america, europe] }
+        language: { const: en }
+        audience: { type: string }
+        deliverables:
+          type: object
+          required: [article, heroVisual, faq]
+          properties:
+            article: { type: boolean }
+            heroVisual: { type: boolean }
+            faq: { type: boolean }
+    Lineage:
+      type: object
+      required: [knowledgeVersion, bomVersion, finishSample, sourceIds, promptContracts, modelRoutes]
+      properties:
+        knowledgeVersion: { type: string }
+        bomVersion: { type: string }
+        finishSample: { type: string }
+        sourceIds:
+          type: array
+          items: { type: string }
+        promptContracts:
+          type: array
+          items: { type: object }
+        modelRoutes:
+          type: array
+          items: { type: string }
+    WorkflowRun:
+      type: object
+      required: [id, origin, status, brief, stages, article, findings, decisions, scores, lineage, owner]
+      properties:
+        id: { type: string }
+        origin: { enum: [local, api] }
+        status: { enum: [idle, queued, analyzing, strategizing, writing, visualizing, reviewing, needs_review, approved, failed] }
+        brief: { $ref: '#/components/schemas/ContentBrief' }
+        stages:
+          type: array
+          items: { type: object }
+        article: { type: object }
+        findings:
+          type: array
+          items: { type: object }
+        decisions:
+          type: array
+          items: { type: object }
+        scores:
+          type: object
+          properties:
+            quality: { type: integer }
+            geo: { type: integer, description: LumaFlow internal content-readiness rubric }
+        lineage: { $ref: '#/components/schemas/Lineage' }
+        owner: { type: string }
+    ContentAsset:
+      type: object
+      required: [id, productId, title, status, currentVersionId, versions]
+      properties:
+        id: { type: string }
+        productId: { type: string }
+        title: { type: string }
+        status: { enum: [已通过, 审核中, 草稿] }
+        currentVersionId: { type: string }
+        versions:
+          type: array
+          items: { type: object }

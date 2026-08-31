@@ -1,4 +1,4 @@
-"""Anonymized deterministic inputs and outputs for the PHK-01 demo."""
+"""Controlled PHK-01 workflow input and output records."""
 
 PRODUCT = {
     "product_id": "phk-01",

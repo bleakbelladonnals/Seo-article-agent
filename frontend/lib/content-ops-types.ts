@@ -1,18 +1,20 @@
 export type View = 'dashboard' | 'knowledge' | 'studio' | 'review' | 'assets';
-export type RunMode = 'demo' | 'live';
+export type ExecutionOrigin = 'local' | 'api';
 export type WorkflowStatus = 'idle' | 'queued' | 'analyzing' | 'strategizing' | 'writing' | 'visualizing' | 'reviewing' | 'needs_review' | 'approved' | 'failed';
 export type AgentStatus = 'waiting' | 'running' | 'completed' | 'failed';
+export type ProductReadiness = '生产就绪' | '待补资料' | '待质量审核';
 
 export type SourceDocument = {
   id: string;
   name: string;
   type: string;
   version: string;
-  status: '已验证' | '待审核';
+  status: '已批准' | '待审核';
   sections: number;
   reference: string;
   excerpt: string;
-  disclosure: string;
+  owner: string;
+  approvedAt: string;
 };
 
 export type BomNode = {
@@ -41,10 +43,12 @@ export type ProductKnowledgeRecord = {
   bomVersion: string;
   finishSample: string;
   verifiedAt: string;
+  owner: string;
   bom: BomNode[];
   processRoute: ProcessStep[];
   includedScope: string[];
   excludedScope: string[];
+  gaps: string[];
 };
 
 export type Product = {
@@ -52,7 +56,7 @@ export type Product = {
   name: string;
   model: string;
   category: string;
-  status: '可用' | '待审核';
+  status: ProductReadiness;
   completeness: number;
   market: string;
   description: string;
@@ -72,7 +76,7 @@ export type ContentBrief = {
   productId: string;
   contentType: 'sourcing-guide';
   keyword: string;
-  market: 'global';
+  market: 'global' | 'north-america' | 'europe';
   language: 'en';
   audience: string;
   deliverables: { article: boolean; heroVisual: boolean; faq: boolean };
@@ -146,17 +150,14 @@ export type ModelEvaluation = {
   dimensions: { fact: number; schema: number; retrieval: number; bilingual: number; latency: number; cost: number; stability: number };
 };
 
-export type EvidenceMetric = { id: string; label: string; before: string; after: string; result: string; sample: string; formula: string };
-export type UatRound = { id: string; round: string; focus: string; completed: number; total: number; outcome: string };
+export type OperationsMetric = { id: string; label: string; before: string; after: string; result: string; sample: string; formula: string };
 
-export type EvidenceSnapshot = {
+export type OperationsSnapshot = {
   label: string;
-  disclosure: string;
   evaluationSet: string;
-  metrics: EvidenceMetric[];
+  metrics: OperationsMetric[];
   modelEvaluations: ModelEvaluation[];
   promptContracts: PromptContract[];
-  uatRounds: UatRound[];
 };
 
 export type RunLineage = {
@@ -173,7 +174,7 @@ export type ScoreSummary = { quality: number; geo: number };
 
 export type WorkflowRun = {
   id: string;
-  mode: RunMode;
+  origin: ExecutionOrigin;
   status: WorkflowStatus;
   brief: ContentBrief;
   stages: AgentRun[];
@@ -185,6 +186,8 @@ export type WorkflowRun = {
   scores: ScoreSummary;
   lineage: RunLineage;
   createdAt: string;
+  updatedAt: string;
+  owner: string;
   error?: string;
 };
 
@@ -194,6 +197,7 @@ export type AssetVersion = {
   id: string;
   label: string;
   createdAt: string;
+  createdBy: string;
   article?: ArticleDocument;
   visualAssets: VisualAsset[];
   sources: SourceDocument[];
@@ -201,7 +205,7 @@ export type AssetVersion = {
   decisions: HumanDecision[];
   scores: ScoreSummary;
   lineage: RunLineage;
-  provenance: { mode: RunMode; runId: string; disclosure: string };
+  provenance: { origin: ExecutionOrigin; runId: string; createdBy: string; createdAt: string };
 };
 
 export type ContentAsset = {
@@ -219,24 +223,25 @@ export type ContentAsset = {
   versions: AssetVersion[];
 };
 
-export type DemoState = {
-  schemaVersion: 4;
+export type WorkspaceState = {
+  schemaVersion: 5;
   view: View;
-  mode: RunMode;
-  liveStatus: 'not_configured' | 'checking' | 'available' | 'unavailable';
-  liveMessage: string;
   selectedProductId: string;
   brief: ContentBrief;
   run: WorkflowRun | null;
   assets: ContentAsset[];
+  workspaceUpdatedAt: string;
   sourceDetailId: string | null;
   selectedFindingId: string;
   editing: boolean;
+  settingsOpen: boolean;
   hydrated: boolean;
   migrationNotice: string;
 };
 
+export type WorkspacePersistentData = Pick<WorkspaceState, 'selectedProductId' | 'brief' | 'run' | 'assets' | 'workspaceUpdatedAt'>;
+export type WorkspaceBackup = { schemaVersion: 5; exportedAt: string; workspace: WorkspacePersistentData };
+
 export type ExportFormat = 'markdown' | 'html' | 'json';
 export type ExportResult = { fileName: string; mimeType: string; content: string | Blob };
-export type CreateRunOptions = { quick?: boolean; failOnce?: boolean };
-export type ServiceHealth = { ok: boolean; mode: RunMode; message: string; capabilities: string[] };
+export type ServiceHealth = { ok: boolean; origin: ExecutionOrigin; message: string; capabilities: string[] };

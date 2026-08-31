@@ -2,39 +2,35 @@
 
 ## Product objective
 
-Build a deterministic, interview-ready frontend demo for an AI Content Operations Hub used by an export-oriented lighting-hardware manufacturer. The complete story is: product master and BOM → simulated five-Agent generation → factual/SEO/GEO/brand review → targeted revision → human approval → versioned asset and export.
+Build and maintain a serious single-user content operations workspace for an export-oriented lighting-hardware manufacturer. The operating path is: approved product knowledge → five-agent workflow → factual/SEO/GEO/brand review → targeted revision → human approval → versioned asset and export.
 
 ## Scope invariants
 
-- Frontend storytelling and interaction quality are the priority.
-- Use fictional, anonymized, deterministic demo data only.
+- Keep the five primary modules: Workbench, Product Knowledge, Content Studio, Review Center and Asset Library.
 - Keep SEO and GEO as first-class review dimensions.
 - Label GEO Score as a LumaFlow internal evaluation rubric, never an industry or search-platform standard.
-- Do not integrate WordPress or another CMS.
-- Do not add a real LLM, RAG pipeline, vector database, relational database, task queue, authentication, or multi-tenant backend.
-- Simulate asynchronous Agents with a typed mock service and predictable timing.
-- Use browser storage only for local demo state and provide a reset action.
-- Do not claim mock metrics, Agents, citations, or business outcomes are live production results.
-- Preserve the archived medal prototype under `legacy/` unless a confirmed task explicitly removes it.
+- Preserve the non-electrical PHK-01 boundary: no lamp holder, wire, driver, light source, electrical assembly or certification conclusion.
+- Use `LocalContentOpsService` and browser storage for the active workspace.
+- Preserve the `ContentOpsService` interface and `/api/v2` adapter contract.
+- Do not add WordPress, another CMS, a database, authentication, a remote task queue or a model service without an explicitly approved scope change.
+- Keep workspace backup limited to business state; exclude navigation, open drawers and editing controls.
+- Preserve the archived medal implementation under `legacy/`.
 - Keep the private project master file excluded from Git and deployment artifacts.
 
 ## UX requirements
 
-- Five primary modules: Workbench, Product Knowledge, Content Studio, Review Center, Asset Library.
-- Every page must support the fixed Aurelia PHK-01 pendant-light hardware kit story.
-- Prefer concrete lighting-hardware and OEM procurement copy over generic placeholders.
-- Make the non-electrical boundary explicit: no lamp holder, wire, driver, light source, or electrical certification.
-- Include intentional loading, empty, success, warning, and error states where they strengthen the story.
-- Use accessible labels, visible focus states, keyboard-friendly controls, and responsive layouts.
-- Browser-check each completed product slice before moving on.
+- Use concise enterprise product language and dense, task-oriented layouts.
+- Product readiness controls whether a content task can be created; blocked products must list the exact knowledge gaps.
+- Show task status, evidence inputs, output schemas, Prompt versions and model-routing policy without exposing hidden reasoning.
+- Critical material and delivery-scope findings must block approval.
+- Use accessible labels, visible focus states, keyboard-friendly controls and responsive layouts.
+- Validate every completed product slice in desktop and 390px browser views.
 
 ## Completion criteria
 
-- Production build passes.
-- The fixed demo can be completed without external services.
-- The plated-steel-versus-solid-brass conflict can be found and corrected.
-- The non-electrical-kit-versus-complete-light conflict can be found and corrected.
-- GEO Score visibly improves from 76 to 86 after both recommendations are accepted.
-- Approval creates a new V2 content asset/version that persists locally.
-- Markdown, HTML, and JSON export work.
-- README and demo script clearly distinguish recreated workflow, anonymized retrospective data, mock behavior, and production roadmap.
+- The PHK-01 knowledge-to-V2 workflow completes without an external service.
+- The plated-steel-versus-solid-brass and non-electrical-kit-versus-complete-light conflicts can be corrected.
+- GEO readiness moves from 76 to 86 after both recommendations are accepted.
+- Approval creates a V2 asset that persists locally and exports as Markdown, HTML and JSON.
+- v4 state migration and v5 backup, restore, invalid-file handling and confirmed clearing work.
+- Lint, typecheck, Vitest, Python contract tests, Playwright and the production build all pass.

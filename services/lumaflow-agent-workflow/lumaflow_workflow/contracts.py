@@ -1,4 +1,4 @@
-"""Typed contracts shared by the fixture-only agent tasks."""
+"""Typed contracts shared by the LumaFlow agent tasks."""
 
 from __future__ import annotations
 

@@ -3,7 +3,7 @@ import type {
   ArticleDocument,
   ContentAsset,
   ContentBrief,
-  EvidenceSnapshot,
+  OperationsSnapshot,
   Product,
   ProductKnowledgeRecord,
   PromptContract,
@@ -13,8 +13,7 @@ import type {
   VisualAsset,
 } from './content-ops-types';
 
-export const demoDisclosure = '虚构、匿名化的面试演示资料；不代表真实企业文件、实时模型结果或线上业务数据。';
-const heroImage = '/lumaflow-hardware-hero.png';
+const heroImage = '/lumaflow-hardware-hero-v2.png';
 
 const phkSources: SourceDocument[] = [
   {
@@ -22,44 +21,48 @@ const phkSources: SourceDocument[] = [
     name: 'PHK-01_Product_Master_v4.xlsx',
     type: '产品主数据',
     version: 'v4.0',
-    status: '已验证',
+    status: '已批准',
     sections: 8,
     reference: 'Material & delivery scope · Rows 18–31',
     excerpt: 'Primary formed parts are stamped steel with approved antique-brass electroplated finish AB-07. The kit is a non-electrical metal hardware package and excludes lamp holders, wire, drivers and light sources.',
-    disclosure: demoDisclosure,
+    owner: 'Nina Zhou · 产品工程',
+    approvedAt: '2026-08-18',
   },
   {
     id: 'source-phk-bom',
     name: 'PHK-01_Assembly_BOM_v3.pdf',
     type: '套件 BOM',
     version: 'v3.0',
-    status: '已验证',
+    status: '已批准',
     sections: 6,
     reference: 'Page 2 · Released kit structure',
     excerpt: 'Released kit PHK-01 contains the canopy assembly, mounting bracket, chain assembly, threaded tube, decorative collars, fastener packet, protective packaging and kit label. Electrical components are not part of this BOM.',
-    disclosure: demoDisclosure,
+    owner: 'Leo Wang · 工艺工程',
+    approvedAt: '2026-08-16',
   },
   {
     id: 'source-phk-finish',
     name: 'Antique_Brass_Finish_AB-07.pdf',
     type: '表面效果色板',
     version: 'AB-07 · Rev B',
-    status: '已验证',
+    status: '已批准',
     sections: 4,
     reference: 'Page 1 · Approved appearance range',
     excerpt: 'AB-07 is an approved antique-brass electroplated appearance on prepared steel. Color approval refers to the controlled sample range and does not change the base material into solid brass.',
-    disclosure: demoDisclosure,
+    owner: 'Iris Liu · 质量管理',
+    approvedAt: '2026-08-15',
   },
   {
     id: 'source-phk-claims',
     name: 'B2B_Content_Claims_Guide_v2.md',
     type: '品牌与事实规范',
     version: 'v2.0',
-    status: '已验证',
+    status: '已批准',
     sections: 9,
     reference: 'Sections 3–4 · Scope and test claims',
     excerpt: 'Do not describe a non-electrical hardware kit as a ready-to-install light. Salt-spray performance may be stated only when the exact sample, method, duration and report are available for the offered finish.',
-    disclosure: demoDisclosure,
+    owner: 'Mia Chen · 内容运营',
+    approvedAt: '2026-08-20',
   },
 ];
 
@@ -68,6 +71,7 @@ const phkKnowledge: ProductKnowledgeRecord = {
   bomVersion: 'BOM-PHK-01@3.0',
   finishSample: 'AB-07 · Rev B',
   verifiedAt: '2026-08-18',
+  owner: 'Nina Zhou · 产品工程',
   bom: [
     {
       id: 'bom-canopy', name: '吸顶盘组件', partNumber: 'ASSY-CAN-104', quantity: 1, level: 'assembly', material: '冲压钢件', finish: 'AB-07 仿古黄铜电镀', source: 'BOM v3 · Line 10',
@@ -92,17 +96,18 @@ const phkKnowledge: ProductKnowledgeRecord = {
   ],
   includedScope: ['吸顶盘与安装支架', '装饰吊链与螺纹管件', '装饰套环和紧固件包', '非电气机械预装', '套件 BOM、分装标签与保护包装'],
   excludedScope: ['灯头与电线', '驱动与 LED 模组', '光源与电气装配', '整灯电气设计', '完整灯具认证与市场准入结论'],
+  gaps: [],
 };
 
 const sampleKnowledge = (id: string): ProductKnowledgeRecord => ({
-  knowledgeVersion: `${id}@1.0`, bomVersion: `${id}-BOM@1.0`, finishSample: '待项目确认', verifiedAt: '2026-08-12', bom: [], processRoute: [],
-  includedScope: ['金属组件', '表面处理', '保护包装'], excludedScope: ['灯头', '电线', '驱动', '光源'],
+  knowledgeVersion: `${id}@1.0`, bomVersion: `${id}-BOM@1.0`, finishSample: '待批准', verifiedAt: '2026-08-12', owner: '产品工程', bom: [], processRoute: [],
+  includedScope: ['金属组件', '表面处理', '保护包装'], excludedScope: ['灯头', '电线', '驱动', '光源'], gaps: ['BOM 尚未批准', '目标关键词尚未批准'],
 });
 
 export const products: Product[] = [
   {
-    id: 'phk-01', name: 'Aurelia PHK-01', model: 'PHK-01-AB07', category: '仿古黄铜吊灯五金套件', status: '可用', completeness: 97, market: '全球 B2B OEM', accent: '#c59b58', imageUrl: heroImage, imagePosition: '78% center', workflowAvailable: true,
-    workflowNote: '固定面试案例已配置产品知识、5-Agent 生成、四维审核、版本和导出。',
+    id: 'phk-01', name: 'Aurelia PHK-01', model: 'PHK-01-AB07', category: '仿古黄铜吊灯五金套件', status: '生产就绪', completeness: 97, market: '全球 B2B OEM', accent: '#c59b58', imageUrl: heroImage, imagePosition: '78% center', workflowAvailable: true,
+    workflowNote: '产品主数据、BOM、色板、关键词和内容规则均已批准。',
     description: '面向海外灯具制造商与品牌商的非电气吊灯金属五金套件，包含机械预装、齐套和保护包装。',
     specs: [
       { label: '交付层级', value: '成套五金包', verified: true, source: '产品主数据 · Scope' },
@@ -117,26 +122,26 @@ export const products: Product[] = [
     applications: ['吊灯 OEM 项目', '灯具品牌采购', '组件与套件交付'],
     keywords: [
       { keyword: 'antique brass pendant light hardware kit manufacturer', intent: '采购决策', priority: '高' },
-      { keyword: 'pendant light metal parts OEM supplier', intent: '商业调研', priority: '高' },
-      { keyword: 'antique brass ceiling canopy kit', intent: '产品对比', priority: '中' },
+      { keyword: 'custom pendant light hardware kit supplier', intent: '商业调研', priority: '高' },
+      { keyword: 'non electrical pendant hardware OEM', intent: '产品对比', priority: '中' },
     ],
     documents: phkSources, knowledge: phkKnowledge,
   },
   {
-    id: 'ca-120', name: 'Canora CA-120', model: 'CA-120-AB', category: '吸顶盘组件', status: '可用', completeness: 92, market: '欧洲 B2B OEM', accent: '#b58a52', imageUrl: heroImage, imagePosition: '75% center', workflowAvailable: false,
-    workflowNote: '知识样本可浏览，本轮未配置内容生产与审核流程。', description: '用于吊灯和吸顶灯结构安装的钢制吸顶盘组件，不包含任何电气部件。',
+    id: 'ca-120', name: 'Canora CA-120', model: 'CA-120-AB', category: '吸顶盘组件', status: '待补资料', completeness: 92, market: '欧洲 B2B OEM', accent: '#b58a52', imageUrl: heroImage, imagePosition: '75% center', workflowAvailable: false,
+    workflowNote: 'BOM 和批准关键词尚未完成，当前不可创建内容任务。', description: '用于吊灯和吸顶灯结构安装的钢制吸顶盘组件，不包含任何电气部件。',
     specs: [{ label: '基材', value: '冷轧钢', verified: true, source: '组件图纸 · Material' }, { label: '直径', value: 'Ø120 mm', verified: true, source: '组件图纸 · Dimensions' }, { label: '表面', value: '仿古黄铜电镀', verified: true, source: '色板 · AB-06' }],
     applications: ['吊灯结构件', '吸顶灯结构件'], keywords: [{ keyword: 'custom ceiling canopy manufacturer', intent: '采购决策', priority: '高' }], documents: [phkSources[2]], knowledge: sampleKnowledge('CA-120'),
   },
   {
-    id: 'ch-08', name: 'Linea CH-08', model: 'CH-08-BN', category: '装饰吊链组件', status: '待审核', completeness: 78, market: '北美 B2B OEM', accent: '#8f8877', imageUrl: heroImage, imagePosition: '83% center', workflowAvailable: false,
+    id: 'ch-08', name: 'Linea CH-08', model: 'CH-08-BN', category: '装饰吊链组件', status: '待质量审核', completeness: 78, market: '北美 B2B OEM', accent: '#8f8877', imageUrl: heroImage, imagePosition: '83% center', workflowAvailable: false,
     workflowNote: '表面耐久字段仍待质量团队确认，暂不可进入内容生产。', description: '面向吊灯结构连接的装饰钢链组件，支持按批准色板进行表面处理。',
     specs: [{ label: '基材', value: '钢', verified: true, source: '组件规格 · Material' }, { label: '链节规格', value: '3.8 × 20 mm', verified: true, source: '组件图纸 · Dimensions' }, { label: '耐久声明', value: '待专项报告', verified: false, source: '待质量确认' }],
     applications: ['吊灯结构连接', '装饰链组件'], keywords: [{ keyword: 'decorative pendant chain supplier', intent: '商业调研', priority: '高' }], documents: [phkSources[3]], knowledge: sampleKnowledge('CH-08'),
   },
   {
-    id: 'mb-17', name: 'Arcus MB-17', model: 'MB-17-BLK', category: '非电气灯体金属组件', status: '可用', completeness: 90, market: '中东 B2B OEM', accent: '#806f5b', imageUrl: heroImage, imagePosition: '80% center', workflowAvailable: false,
-    workflowNote: '知识样本可浏览，本轮未配置内容生产与审核流程。', description: '完成结构安装与保护包装的非电气金属灯体，由客户负责电气部件和市场准入。',
+    id: 'mb-17', name: 'Arcus MB-17', model: 'MB-17-BLK', category: '非电气灯体金属组件', status: '待补资料', completeness: 90, market: '中东 B2B OEM', accent: '#806f5b', imageUrl: heroImage, imagePosition: '80% center', workflowAvailable: false,
+    workflowNote: '工艺路线和批准关键词尚未完成，当前不可创建内容任务。', description: '完成结构安装与保护包装的非电气金属灯体，由客户负责电气部件和市场准入。',
     specs: [{ label: '交付层级', value: '非电气灯体', verified: true, source: '产品主数据 · Scope' }, { label: '基材', value: '钢＋铝', verified: true, source: '产品主数据 · Material' }, { label: '表面', value: '哑黑粉末涂层', verified: true, source: '色板 · MB-03' }],
     applications: ['壁灯结构组件', '灯体 OEM'], keywords: [{ keyword: 'non electrical lamp body manufacturer', intent: '采购决策', priority: '高' }], documents: [phkSources[0]], knowledge: sampleKnowledge('MB-17'),
   },
@@ -158,7 +163,7 @@ export const agentTemplates: AgentRun[] = [
   { id: 'product', name: '产品资料解析', role: '产品资料解析 Agent', durationLabel: '4 秒', summary: '已规范化 8 个产品事实、6 类 BOM 对象与非电气范围。', evidence: '4 个来源 · 8 个事实 · BOM v3', status: 'waiting', ...promptContracts[0] },
   { id: 'seo', name: 'SEO 内容策略', role: 'SEO 策略 Agent', durationLabel: '5 秒', summary: '已识别 B2B 采购意图并生成选型指南结构与 FAQ 计划。', evidence: '3 个关键词 · 1 份 SeoBrief', status: 'waiting', ...promptContracts[1] },
   { id: 'writer', name: '文章内容生成', role: '文章生成 Agent', durationLabel: '7 秒', summary: '已生成包含 BOM、工艺、询价清单和 FAQ 的英文采购指南。', evidence: '1 篇长文 · 10 个内容模块', status: 'waiting', ...promptContracts[2] },
-  { id: 'visual', name: '视觉创意生成', role: '视觉创意 Agent', durationLabel: '4 秒', summary: '已准备产品主图、BOM、色板与来源血缘视觉方案。', evidence: '4 项模拟视觉资产', status: 'waiting', ...promptContracts[3] },
+  { id: 'visual', name: '视觉创意生成', role: '视觉创意 Agent', durationLabel: '4 秒', summary: '已准备产品主图、BOM、色板与来源血缘视觉方案。', evidence: '4 项视觉资产', status: 'waiting', ...promptContracts[3] },
   { id: 'review', name: '质量与治理审核', role: '质量审核 Agent', durationLabel: '6 秒', summary: '发现 2 个关键问题与 5 项事实、SEO、GEO、品牌建议。', evidence: '7 条发现 · 4 个治理维度', status: 'waiting', ...promptContracts[4] },
 ];
 
@@ -192,6 +197,25 @@ export const initialArticle: ArticleDocument = {
   ],
 };
 
+const titleCaseKeyword = (keyword: string) => keyword
+  .split(/\s+/)
+  .filter(Boolean)
+  .map(word => ['oem', 'b2b'].includes(word.toLowerCase()) ? word.toUpperCase() : `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
+  .join(' ');
+
+export function createArticleForBrief(brief: ContentBrief): ArticleDocument {
+  const article = JSON.parse(JSON.stringify(initialArticle)) as ArticleDocument;
+  const marketLabel = brief.market === 'north-america' ? 'North American' : brief.market === 'europe' ? 'European' : 'global';
+  article.title = `${titleCaseKeyword(brief.keyword)}: OEM Sourcing Guide`;
+  article.dek = `A source-led guide for ${marketLabel} ${brief.audience} evaluating metal parts, finish control, assembly scope and export-ready kit delivery.`;
+  const opening = article.sections.find(section => section.id === 'opening');
+  if (opening) {
+    opening.text = `${brief.keyword} options should be evaluated for ${marketLabel} procurement on material control, finish-sample approval, released BOM structure and delivery scope—not on appearance alone. Buyers should verify which metal parts are included, how the antique brass effect is produced and where electrical responsibility begins before approving a supplier.`;
+  }
+  if (!brief.deliverables.faq) article.sections = article.sections.filter(section => section.kind !== 'faq');
+  return article;
+}
+
 export const findings: ReviewFinding[] = [
   { id: 'fact-material', type: 'fact', severity: 'critical', title: '基材与表面效果混淆', detail: '文章将钢制件仿古黄铜电镀写成实心黄铜，会直接影响材料、成本和采购判断。', source: 'PHK-01_Product_Master_v4.xlsx · Material', targetSectionId: 'materials', before: 'solid-brass construction across its principal components, giving buyers a naturally aged brass surface without a plated substrate', after: 'stamped-steel construction with an approved AB-07 antique-brass electroplated finish on the principal formed parts', scoreImpact: { quality: 4 } },
   { id: 'fact-scope', type: 'fact', severity: 'critical', title: '交付范围越过非电气边界', detail: 'PHK-01 是非电气五金套件，不是可直接安装使用的完整吊灯。', source: 'PHK-01_Assembly_BOM_v3.pdf · Page 2', targetSectionId: 'scope', before: 'ready-to-install complete pendant light', after: 'non-electrical pendant light hardware kit', scoreImpact: { quality: 4 } },
@@ -203,15 +227,14 @@ export const findings: ReviewFinding[] = [
 ];
 
 export const visualAssets: VisualAsset[] = [
-  { id: 'visual-hero', title: 'PHK-01 hardware kit hero', format: 'hero', label: '产品主图 · 模拟资产', alt: 'Fictional antique brass pendant hardware kit with canopy, chain, tube and fastener pack', caption: '展示非电气吊灯五金套件及受控仿古黄铜表面。', accent: '#c59b58', motif: 'product', imageUrl: heroImage },
-  { id: 'visual-bom', title: 'Released kit BOM', format: 'diagram', label: 'BOM 信息图 · 模拟资产', alt: 'Structured PHK-01 bill of materials diagram', caption: '以套件、组件、零件和包装四层展示齐套关系。', accent: '#c59b58', motif: 'bom' },
-  { id: 'visual-finish', title: 'AB-07 finish control', format: 'swatch', label: '色板信息图 · 模拟资产', alt: 'Antique brass finish range swatches on prepared steel', caption: '强调“表面效果不等于实心黄铜”的事实边界。', accent: '#d2a866', motif: 'finish' },
-  { id: 'visual-lineage', title: 'Evidence-to-asset lineage', format: 'flow', label: '证据血缘图 · 模拟资产', alt: 'Knowledge, prompts, review decisions and approved asset lineage', caption: '连接知识版本、Prompt、模型路由、审查和 V2 资产。', accent: '#a8cfaa', motif: 'lineage' },
+  { id: 'visual-hero', title: 'PHK-01 hardware kit hero', format: 'hero', label: '产品主图', alt: 'Antique brass pendant hardware kit with canopy, chain, tube and fastener pack', caption: '展示非电气吊灯五金套件及受控仿古黄铜表面。', accent: '#c59b58', motif: 'product', imageUrl: heroImage },
+  { id: 'visual-bom', title: 'Released kit BOM', format: 'diagram', label: 'BOM 信息图', alt: 'Structured PHK-01 bill of materials diagram', caption: '以套件、组件、零件和包装四层展示齐套关系。', accent: '#c59b58', motif: 'bom' },
+  { id: 'visual-finish', title: 'AB-07 finish control', format: 'swatch', label: '色板信息图', alt: 'Antique brass finish range swatches on prepared steel', caption: '强调“表面效果不等于实心黄铜”的事实边界。', accent: '#d2a866', motif: 'finish' },
+  { id: 'visual-lineage', title: 'Evidence-to-asset lineage', format: 'flow', label: '证据血缘图', alt: 'Knowledge, prompts, review decisions and approved asset lineage', caption: '连接知识版本、Prompt、模型路由、审查和 V2 资产。', accent: '#a8cfaa', motif: 'lineage' },
 ];
 
-export const evidenceSnapshot: EvidenceSnapshot = {
-  label: 'Historical Review Snapshot · 2026-08',
-  disclosure: '脱敏历史复盘快照；样本、周期与公式用于解释简历口径，不是当前 Demo 实时分析数据。',
+export const operationsSnapshot: OperationsSnapshot = {
+  label: 'Operations Review · 2026-08',
   evaluationSet: '150 道冻结评测题；关键题重复 3 次；业务与产品双人盲评。',
   metrics: [
     { id: 'draft-time', label: '初稿中位耗时', before: '150 分钟', after: '30 分钟', result: '↓ 80%', sample: '前后各 40 篇', formula: '(150−30) ÷ 150' },
@@ -219,7 +242,6 @@ export const evidenceSnapshot: EvidenceSnapshot = {
     { id: 'first-pass', label: '一次审核通过率', before: '64%', after: '85%', result: '+21pp', sample: '前后各 100 篇', formula: '一次通过篇数 ÷ 冻结样本数' },
     { id: 'conflict', label: '参数冲突识别率', before: '—', after: '46 / 50', result: '92%', sample: '50 个预埋冲突', formula: '识别冲突数 ÷ 冲突总数' },
     { id: 'traceability', label: '知识来源可追溯率', before: '—', after: '191 / 200', result: '95.5%', sample: '200 个关键事实', formula: '有有效来源事实数 ÷ 事实总数' },
-    { id: 'uat', label: '核心任务完成率', before: '—', after: '56 / 60', result: '93.3%', sample: '3 轮 UAT', formula: '完成任务数 ÷ 任务总数' },
     { id: 'review-time', label: '审核中位耗时', before: '40 分钟', after: '20 分钟', result: '↓ 50%', sample: '前后各 30 篇', formula: '(40−20) ÷ 40' },
     { id: 'reuse', label: '历史资产复用率', before: '—', after: '18 / 30', result: '60%', sample: '最近 30 个任务', formula: '复用任务数 ÷ 任务总数' },
   ],
@@ -229,11 +251,6 @@ export const evidenceSnapshot: EvidenceSnapshot = {
     { id: 'gpt', model: 'GPT-4.1', score: 87.3, routingRole: '高风险冲突与质量标杆', dimensions: { fact: 94, schema: 95, retrieval: 92, bilingual: 96, latency: 71, cost: 52, stability: 88 } },
   ],
   promptContracts,
-  uatRounds: [
-    { id: 'uat-1', round: 'Round 1', focus: '创建任务与知识来源理解', completed: 18, total: 20, outcome: '补充来源定位和缺参解释' },
-    { id: 'uat-2', round: 'Round 2', focus: '审核层级与人工修改入口', completed: 19, total: 20, outcome: '关键问题置顶并强化审批门禁' },
-    { id: 'uat-3', round: 'Round 3', focus: '版本、导出与资产复用', completed: 19, total: 20, outcome: '统一版本血缘和导出字段' },
-  ],
 };
 
 export const fixedLineage: RunLineage = {
@@ -243,31 +260,30 @@ export const fixedLineage: RunLineage = {
   sourceIds: phkSources.map(source => source.id),
   promptContracts,
   modelRoutes: ['Qwen-Plus', 'DeepSeek-V3-0324', 'GPT-4.1'],
-  evaluationSnapshot: evidenceSnapshot.label,
+  evaluationSnapshot: operationsSnapshot.label,
 };
 
 function simpleArticle(title: string, product: string, subject: string): ArticleDocument {
-  return { title, dek: `A fictional, source-led ${subject} prepared for the LumaFlow portfolio demonstration.`, sections: [{ id: 'opening', heading: '', kind: 'lead', text: `${product} is used as an anonymized metal-hardware example. Buyers should verify material, finish, assembly scope and source versions before approval.` }, { id: 'method', heading: 'A controlled sourcing method', kind: 'steps', text: 'Keep evidence and scope visible.', items: ['Confirm the exact part level.', 'Check the controlled product record.', 'Approve finish and delivery scope.'] }] };
+  return { title, dek: `A source-led ${subject} maintained in the LumaFlow content asset library.`, sections: [{ id: 'opening', heading: '', kind: 'lead', text: `${product} is managed as a controlled metal-hardware product record. Buyers should verify material, finish, assembly scope and source versions before approval.` }, { id: 'method', heading: 'A controlled sourcing method', kind: 'steps', text: 'Keep evidence and scope visible.', items: ['Confirm the exact part level.', 'Check the controlled product record.', 'Approve finish and delivery scope.'] }] };
 }
 
-const provenanceDisclosure = '确定性演示输出；不是实时模型结果或真实业务绩效。';
 const lineageFor = (productId: string): RunLineage => productId === 'phk-01' ? fixedLineage : { ...fixedLineage, knowledgeVersion: `${productId}@1.0`, bomVersion: `${productId}-BOM@1.0`, sourceIds: [] };
 
 export const seedAssets: ContentAsset[] = [
   {
     id: 'asset-canopy', productId: 'ca-120', product: 'Canora CA-120', title: 'How to Specify Custom Ceiling Canopy Assemblies', type: 'article', typeLabel: 'OEM 采购指南', status: '已通过', currentVersionId: 'canopy-v3', updatedAt: '2026-08-26', owner: 'Mia Chen', color: '#b58a52',
-    versions: ['V1', 'V2', 'V3'].map((label, index) => ({ id: `canopy-v${index + 1}`, label, createdAt: `2026-08-${24 + index}`, article: simpleArticle('How to Specify Custom Ceiling Canopy Assemblies', 'Canora CA-120', 'ceiling-canopy sourcing guide'), visualAssets: [], sources: [phkSources[2]], findings: [], decisions: [], scores: { quality: 84 + index, geo: 80 + index * 2 }, lineage: lineageFor('ca-120'), provenance: { mode: 'demo', runId: `seed-canopy-${index + 1}`, disclosure: provenanceDisclosure } })),
+    versions: ['V1', 'V2', 'V3'].map((label, index) => ({ id: `canopy-v${index + 1}`, label, createdAt: `2026-08-${24 + index}`, createdBy: 'Mia Chen', article: simpleArticle('How to Specify Custom Ceiling Canopy Assemblies', 'Canora CA-120', 'ceiling-canopy sourcing guide'), visualAssets: [], sources: [phkSources[2]], findings: [], decisions: [], scores: { quality: 84 + index, geo: 80 + index * 2 }, lineage: lineageFor('ca-120'), provenance: { origin: 'local', runId: `run-canopy-${index + 1}`, createdBy: 'Mia Chen', createdAt: `2026-08-${24 + index}` } })),
   },
   {
     id: 'asset-phk', productId: 'phk-01', product: 'Aurelia PHK-01', title: initialArticle.title, type: 'article', typeLabel: 'B2B SEO 采购指南', status: '审核中', currentVersionId: 'phk-v1', updatedAt: '2026-08-27', owner: 'Mia Chen', color: '#c59b58',
-    versions: [{ id: 'phk-v1', label: 'V1', createdAt: '2026-08-27', article: initialArticle, visualAssets, sources: phkSources, findings, decisions: [], scores: { quality: 82, geo: 76 }, lineage: fixedLineage, provenance: { mode: 'demo', runId: 'seed-phk-run', disclosure: provenanceDisclosure } }],
+    versions: [{ id: 'phk-v1', label: 'V1', createdAt: '2026-08-27', createdBy: 'Mia Chen', article: initialArticle, visualAssets, sources: phkSources, findings, decisions: [], scores: { quality: 82, geo: 76 }, lineage: fixedLineage, provenance: { origin: 'local', runId: 'LFC-20260827-014', createdBy: 'Mia Chen', createdAt: '2026-08-27' } }],
   },
   {
     id: 'asset-chain', productId: 'ch-08', product: 'Linea CH-08', title: 'Decorative Pendant Chain Sourcing Guide', type: 'article', typeLabel: '产品技术指南', status: '已通过', currentVersionId: 'chain-v2', updatedAt: '2026-08-24', owner: 'Mia Chen', color: '#8f8877',
-    versions: ['V1', 'V2'].map((label, index) => ({ id: `chain-v${index + 1}`, label, createdAt: `2026-08-${23 + index}`, article: simpleArticle('Decorative Pendant Chain Sourcing Guide', 'Linea CH-08', 'decorative-chain guide'), visualAssets: [], sources: [phkSources[3]], findings: [], decisions: [], scores: { quality: 86 + index * 2, geo: 84 + index * 2 }, lineage: lineageFor('ch-08'), provenance: { mode: 'demo', runId: `seed-chain-${index + 1}`, disclosure: provenanceDisclosure } })),
+    versions: ['V1', 'V2'].map((label, index) => ({ id: `chain-v${index + 1}`, label, createdAt: `2026-08-${23 + index}`, createdBy: 'Mia Chen', article: simpleArticle('Decorative Pendant Chain Sourcing Guide', 'Linea CH-08', 'decorative-chain guide'), visualAssets: [], sources: [phkSources[3]], findings: [], decisions: [], scores: { quality: 86 + index * 2, geo: 84 + index * 2 }, lineage: lineageFor('ch-08'), provenance: { origin: 'local', runId: `run-chain-${index + 1}`, createdBy: 'Mia Chen', createdAt: `2026-08-${23 + index}` } })),
   },
   {
     id: 'asset-body-visual', productId: 'mb-17', product: 'Arcus MB-17', title: 'Non-electrical Lamp Body Scope Diagram', type: 'visual', typeLabel: '范围信息图', status: '草稿', currentVersionId: 'body-v1', updatedAt: '2026-08-23', owner: 'AI Content Studio', color: '#806f5b',
-    versions: [{ id: 'body-v1', label: 'V1', createdAt: '2026-08-23', visualAssets: [{ ...visualAssets[3], id: 'body-lineage', title: 'Mechanical scope boundary' }], sources: [phkSources[0]], findings: [], decisions: [], scores: { quality: 76, geo: 70 }, lineage: lineageFor('mb-17'), provenance: { mode: 'demo', runId: 'seed-body-visual', disclosure: provenanceDisclosure } }],
+    versions: [{ id: 'body-v1', label: 'V1', createdAt: '2026-08-23', createdBy: 'AI Content Studio', visualAssets: [{ ...visualAssets[3], id: 'body-lineage', title: 'Mechanical scope boundary' }], sources: [phkSources[0]], findings: [], decisions: [], scores: { quality: 76, geo: 70 }, lineage: lineageFor('mb-17'), provenance: { origin: 'local', runId: 'run-body-visual', createdBy: 'AI Content Studio', createdAt: '2026-08-23' } }],
   },
 ];

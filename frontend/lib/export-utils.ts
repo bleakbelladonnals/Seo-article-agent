@@ -72,18 +72,18 @@ export function exportAssetVersion(asset: ContentAsset, versionId: string, forma
     throw new Error('视觉资产仅支持 JSON 元数据导出。');
   }
   if (format === 'markdown') {
-    const lineage = `## LumaFlow lineage\n\n- Knowledge: ${version.lineage.knowledgeVersion}\n- BOM: ${version.lineage.bomVersion}\n- Finish sample: ${version.lineage.finishSample}\n- Prompt contracts: ${version.lineage.promptContracts.map(item => item.promptVersion).join(', ')}\n- Model routes: ${version.lineage.modelRoutes.join(', ')}\n- Provenance: ${version.provenance.disclosure}`;
+    const lineage = `## LumaFlow lineage\n\n- Knowledge: ${version.lineage.knowledgeVersion}\n- BOM: ${version.lineage.bomVersion}\n- Finish sample: ${version.lineage.finishSample}\n- Prompt contracts: ${version.lineage.promptContracts.map(item => item.promptVersion).join(', ')}\n- Model routes: ${version.lineage.modelRoutes.join(', ')}\n- Execution origin: ${version.provenance.origin}\n- Task: ${version.provenance.runId}\n- Created by: ${version.provenance.createdBy}\n- Created at: ${version.provenance.createdAt}`;
     return { fileName: `${baseName}.md`, mimeType: 'text/markdown;charset=utf-8', content: `${articleToMarkdown(version.article!)}\n\n---\n\n${lineage}` };
   }
   if (format === 'html') {
-    const lineage = `<aside><h2>LumaFlow lineage</h2><ul><li>Knowledge: ${escapeHtml(version.lineage.knowledgeVersion)}</li><li>BOM: ${escapeHtml(version.lineage.bomVersion)}</li><li>Finish sample: ${escapeHtml(version.lineage.finishSample)}</li><li>Prompt contracts: ${escapeHtml(version.lineage.promptContracts.map(item => item.promptVersion).join(', '))}</li><li>Model routes: ${escapeHtml(version.lineage.modelRoutes.join(', '))}</li></ul><p>${escapeHtml(version.provenance.disclosure)}</p></aside>`;
+    const lineage = `<aside><h2>LumaFlow lineage</h2><ul><li>Knowledge: ${escapeHtml(version.lineage.knowledgeVersion)}</li><li>BOM: ${escapeHtml(version.lineage.bomVersion)}</li><li>Finish sample: ${escapeHtml(version.lineage.finishSample)}</li><li>Prompt contracts: ${escapeHtml(version.lineage.promptContracts.map(item => item.promptVersion).join(', '))}</li><li>Model routes: ${escapeHtml(version.lineage.modelRoutes.join(', '))}</li><li>Execution origin: ${escapeHtml(version.provenance.origin)}</li><li>Task: ${escapeHtml(version.provenance.runId)}</li><li>Created by: ${escapeHtml(version.provenance.createdBy)}</li><li>Created at: ${escapeHtml(version.provenance.createdAt)}</li></ul></aside>`;
     return { fileName: `${baseName}.html`, mimeType: 'text/html;charset=utf-8', content: articleToHtml(version.article!).replace('</body>', `${lineage}</body>`) };
   }
   return {
     fileName: `${baseName}.json`,
     mimeType: 'application/json;charset=utf-8',
     content: JSON.stringify({
-      schemaVersion: 2,
+      schemaVersion: 3,
       asset: {
         id: asset.id,
         productId: asset.productId,

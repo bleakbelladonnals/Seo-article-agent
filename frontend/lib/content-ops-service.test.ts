@@ -1,34 +1,34 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { defaultBrief } from './demo-data';
-import { MockContentOpsService } from './content-ops-service';
+import { defaultBrief } from './workspace-data';
+import { LocalContentOpsService } from './content-ops-service';
 import type { WorkflowEvent } from './content-ops-types';
 
-describe('MockContentOpsService', () => {
+describe('LocalContentOpsService', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
-  it('drives quick demo through the same workflow event contract', async () => {
-    const service = new MockContentOpsService();
-    const run = await service.createRun(defaultBrief, { quick: true });
+  it('executes five agents in order through the workflow event contract', async () => {
+    const service = new LocalContentOpsService();
+    const run = await service.createRun(defaultBrief);
     const events: WorkflowEvent[] = [];
     service.subscribeToRun(run.id, event => events.push(event));
 
-    await vi.advanceTimersByTimeAsync(800);
+    await vi.advanceTimersByTimeAsync(2_000);
 
-    expect(events.map(event => event.status)).toEqual(expect.arrayContaining(['queued', 'analyzing', 'strategizing', 'writing', 'visualizing', 'reviewing', 'needs_review']));
-    expect((await service.getRun(run.id)).status).toBe('needs_review');
+    expect(events.map(event => event.status)).toEqual(['queued', 'analyzing', 'strategizing', 'writing', 'visualizing', 'reviewing', 'needs_review']);
+    expect((await service.getRun(run.id)).stages.every(stage => stage.status === 'completed')).toBe(true);
   });
 
-  it('provides a deterministic failure that can be retried with a new run', async () => {
-    const service = new MockContentOpsService();
-    const failedRun = await service.createRun(defaultBrief, { quick: true, failOnce: true });
-    service.subscribeToRun(failedRun.id, () => undefined);
-    await vi.advanceTimersByTimeAsync(400);
-    expect((await service.getRun(failedRun.id)).status).toBe('failed');
+  it('uses Brief fields in each new task and keeps product facts fixed', async () => {
+    const service = new LocalContentOpsService();
+    const run = await service.createRun({ ...defaultBrief, keyword: 'non electrical pendant hardware OEM', market: 'north-america' });
+    expect(run.article.title).toContain('Non Electrical Pendant Hardware OEM');
+    expect(run.article.dek).toContain('North American');
+    expect(run.lineage.bomVersion).toBe('BOM-PHK-01@3.0');
+  });
 
-    const retry = await service.createRun(defaultBrief, { quick: true });
-    service.subscribeToRun(retry.id, () => undefined);
-    await vi.advanceTimersByTimeAsync(800);
-    expect((await service.getRun(retry.id)).status).toBe('needs_review');
+  it('blocks products whose knowledge record is not production ready', async () => {
+    const service = new LocalContentOpsService();
+    await expect(service.createRun({ ...defaultBrief, productId: 'ch-08' })).rejects.toThrow(/尚未达到生产就绪/);
   });
 });
